@@ -1,2 +1,5 @@
-Jeu de go,
-équipe composée de ...
+Equipe composée de 
+* CHEVILY Pierre
+* BOUGAMZA Sofiane
+* KACI Said
+* MAATSOUGI Nassim
