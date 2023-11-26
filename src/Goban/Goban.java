@@ -1,5 +1,7 @@
 package Goban;
 
+import java.util.Arrays;
+
 public class Goban {
     private static int NB_BOXES = 19;
     private static final int INDEX_BEGINNING_ALPHABET = (int)'A';
@@ -33,9 +35,9 @@ public class Goban {
     public void clear_board() {
         board = new Stone[NB_BOXES][NB_BOXES];
         //@TODO Peut mieux faire en complexité
-        for (int i = 0; i < NB_BOXES; i++) // Ligne
-            for (int j = 0; j < NB_BOXES; j++) // Colonne
-                board[i][j] = Stone.UNDEFINED;
+        for (Stone[] ligne : board) {
+            Arrays.fill(ligne, Stone.UNDEFINED);
+        }
     }
 
     public String showboard() {
@@ -44,11 +46,11 @@ public class Goban {
 
         for (int i = NB_BOXES - 1; i >= 0; i--) { // Ligne
             sb.append("\n").append(i + 1);
-            if (i < 9)
+            if (i < 9 && NB_BOXES >= 10)
                 sb.append(' ');
             for (int j = 0; j < NB_BOXES; j++) // Colonne
                 sb.append(' ').append(board[i][j]);
-            if (i < 9)
+            if (i < 9 && NB_BOXES >= 10)
                 sb.append(' ');
             sb.append(' ').append(i + 1);
         }
