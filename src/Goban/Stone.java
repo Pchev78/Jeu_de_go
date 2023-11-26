@@ -9,7 +9,7 @@ public enum Stone {
         return switch (this) {
             case BLACK -> "B";
             case WHITE -> "W";
-            case UNDEFINED -> "."; // Using '+' or any other character to represent an empty space
+            case UNDEFINED -> "."; // Représente une case non occupée par un joueur
             default -> throw new IllegalArgumentException();
         };
     }

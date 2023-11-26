@@ -6,58 +6,53 @@ public class Goban {
     private static String headerLetters; // Ligne composée de NB_CASES lettres
     private Stone[][] board;
     public Goban() {
-        this.board = new Stone[NB_BOXES][NB_BOXES];
         headerLetters = getHeader();
+        clear_board();
     }
     private static String getHeader() {
         StringBuilder headerLetters= new StringBuilder();
         headerLetters.append(' '); // Correspond à la 1ʳᵉ colonne de la colonne. L'espace pourrait être remplacé par un /
-        for (int i = INDEX_BEGINNING_ALPHABET; i < INDEX_BEGINNING_ALPHABET + NB_BOXES; i++) {
+        if (NB_BOXES > 9)
             headerLetters.append(' ');
-            headerLetters.append((char) i);
-        }
+        for (int i = INDEX_BEGINNING_ALPHABET; i < INDEX_BEGINNING_ALPHABET + NB_BOXES; i++)
+            headerLetters.append(' ').append((char) i);
         return headerLetters.toString();
     }
-    public static void boardsize(int nbBoxes) {
+    public void boardsize(int nbBoxes) throws IllegalArgumentException{
         if (nbBoxes > 25)
-            System.out.println("Nombre de cases trop grand");
+            throw new IllegalArgumentException("Nombre de cases trop grand");
         else if (nbBoxes < 2)
-            System.out.println("Nombre de cases trop petit");
+            throw new IllegalArgumentException("Nombre de cases trop petit");
         else {
             NB_BOXES = nbBoxes;
             headerLetters = getHeader();
+            clear_board();
         }
     }
 
     public void clear_board() {
+        board = new Stone[NB_BOXES][NB_BOXES];
         //@TODO Peut mieux faire en complexité
-        for (int i = 0; i < NB_BOXES; i++) { // Ligne
-            for (int j = 0; j < NB_BOXES; j++) { // Colonne
+        for (int i = 0; i < NB_BOXES; i++) // Ligne
+            for (int j = 0; j < NB_BOXES; j++) // Colonne
                 board[i][j] = Stone.UNDEFINED;
-            }
-        }
     }
 
-    public static String showboard() {
-        // @TODO La fonction peut être optimisée
+    public String showboard() {
         StringBuilder sb = new StringBuilder();
         sb.append(headerLetters); // 1ʳᵉ ligne
 
-        //@TODO Peut mieux faire en complexité
-        for (int i = 0; i < NB_BOXES; i++) { // Ligne
-            sb.append("\n");
-            sb.append(i);
-            for (int j = 0; j < NB_BOXES; j++) { // Colonne
+        for (int i = NB_BOXES - 1; i >= 0; i--) { // Ligne
+            sb.append("\n").append(i + 1);
+            if (i < 9)
                 sb.append(' ');
-                sb.append(Stone.UNDEFINED);
-            }
-            sb.append(' ');
-            sb.append(i);
+            for (int j = 0; j < NB_BOXES; j++) // Colonne
+                sb.append(' ').append(board[i][j]);
+            if (i < 9)
+                sb.append(' ');
+            sb.append(' ').append(i + 1);
         }
-        sb.append("\n");
-        sb.append(headerLetters); // Dernière ligne
+        sb.append("\n").append(headerLetters).append("\n"); // Dernière ligne
         return sb.toString();
     }
-
-
 }
