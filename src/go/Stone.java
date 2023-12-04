@@ -1,4 +1,4 @@
-package Goban;
+package go;
 
 public enum Stone {
     BLACK,
