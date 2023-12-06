@@ -68,7 +68,7 @@ public class Goban {
             if (i < 9 && NB_BOXES >= 10)
                 sb.append(' ');
             for (int j = 0; j < NB_BOXES; j++) // Colonne
-                sb.append(' ').append(board[i][j]);
+                sb.append(' ').append(board[j][i]);
             if (i < 9 && NB_BOXES >= 10)
                 sb.append(' ');
             sb.append(' ').append(i + 1);
@@ -78,15 +78,48 @@ public class Goban {
     }
 
     public void play(String[] arguments) {
-        // @TODO Vérifier que c'est bien le tour de la personne qui a appelé la commande
         String[] message = getMessage(arguments);
-        checkMessage(message);
-        System.out.println("Tout : " + Arrays.toString(message));
+        String color = message[INDEX_COLOR_PLAY - 1]; // @FIXME Renommer la variable
+        String coordonneesString = message[INDEX_COORDONNEES_PLAY - 1]; // @FIXME Renommer la variable
+        char[] coordonneesLine = new char[coordonneesString.length() - 1];
+        coordonneesString.getChars(1,coordonneesString.length(),coordonneesLine,0);
+        char column = coordonneesString.charAt(0);
+        int columnInt = column - INDEX_BEGINNING_ALPHABET; // @FIXME Renommer variable
+        int line = Integer.parseInt(String.valueOf(coordonneesLine)) - 1;
+        if (!isPlayable(color,column, columnInt, line)) {
+            return; // @TODO Changer l'affichage de "="" à "?"
+        }
+        addPiece(color, columnInt, line);
+        System.out.println(showboard());
 
-        // @TODO Vérifier qu'il n'y a rien à la case demandée
-        // @TODO (Sprint 3) Vérifier qu'il n'y ait pas de suicide
         // @TODO Ajouter Stone de la couleur du joueur qui a lancé play
         // @TODO Vérifier si une pièce ne doit pas être prise
+    }
+
+    public boolean isPlayable(String color, char column, int columnInt, int line) {
+        return !(checkMessage(color, column, line) && !boxIsEmpty(columnInt, line)
+                && !checkSuicide());
+    }
+
+    private boolean checkSuicide() { // @TODO (Sprint 3) Implémenter la méthode
+        return false;
+    }
+
+    private boolean boxIsEmpty(int column, int line) {
+        return getPiece(column, line) == Stone.UNDEFINED;
+    }
+
+    public void addPiece (String player, int column, int line) { // @TODO Remplacer String player par IPlayer player
+        Stone color;
+        if (player.equals("BLACK"))
+            color = Stone.BLACK;
+        else
+            color = Stone.WHITE;
+        board[column][line] = color;
+    }
+
+    public Stone getPiece(int column, int line) {
+        return board[column][line];
     }
 
     private String[] getMessage(String[] arguments) {
@@ -96,22 +129,19 @@ public class Goban {
         return message;
     }
 
-    private void checkMessage(String[] message) {
+    private boolean checkMessage(String color, char column, int line) {
         try {
-            if (!message[INDEX_COLOR_PLAY - 1].equals("BLACK") && !message[INDEX_COLOR_PLAY - 1].equals("WHITE"))
+            if (!color.equals("BLACK") && !color.equals("WHITE"))
                 throw new IllegalArgumentException("Pas BLACK ou WHITE");
-            String coordonnees = message[INDEX_COORDONNEES_PLAY - 1];
-            char column = coordonnees.charAt(0);
-            char[] lineChar = new char[coordonnees.length() - 1];
-            coordonnees.getChars(1,coordonnees.length(),lineChar,0);
-            System.out.println(lineChar);
-            int line = Integer.parseInt(String.valueOf(lineChar));
+            // @TODO Vérifier que c'est bien le tour de la personne qui a appelé la commande
             if (column < (char) INDEX_BEGINNING_ALPHABET || column > (char) (INDEX_BEGINNING_ALPHABET + NB_BOXES))
                 throw new IndexOutOfBoundsException("Lettre pas dans les bornes");
-            if (line < FIRST_LINE || line > NB_BOXES)
+            if (line < FIRST_LINE - 1 || line > NB_BOXES)
                 throw new IndexOutOfBoundsException("Nombre pas dans les bornes");
+            return true;
         } catch (Exception e) {
             System.out.println("Mauvais paramètres. Erreur : " + e.getLocalizedMessage());
+            return false;
         }
     }
 }

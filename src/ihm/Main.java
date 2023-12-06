@@ -27,7 +27,7 @@ public class Main {
     public static void main(String[] args)throws IllegalArgumentException {
         Scanner sc = new Scanner(System.in);
         String input = "", command;
-        Goban goban = null;
+        Goban goban = new Goban();
         do {
             nb_commands++;
             input = sc.nextLine(); // Lire la prochaine ligne
@@ -35,7 +35,6 @@ public class Main {
             String[] arguments = input.split(" ");
             command = getCommand(arguments); // @FIXME Vraiment utile ?
             arguments = command.split(" ");
-            goban = new Goban();
             if (arguments[0].equals("BOARDSIZE")) {
                 // @TODO Créer méthode callBoardsize
                 if (arguments.length > 1) { // S'il y a quelque chose après "boardsize"

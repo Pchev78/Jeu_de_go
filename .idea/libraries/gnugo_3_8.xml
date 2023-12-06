@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="gnugo-3.8">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/gnugo-3.8.zip!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>
