@@ -15,8 +15,8 @@ public class Goban {
     private static final int INDEX_COLUMNS = 0, INDEX_LINES = 1;
     private static String headerLetters; // Ligne composée de NB_CASES lettres
     private Stone[][] board;
-    private White white;
-    private Black black;
+    private Player white;
+    private Player black;
     public Goban() {
         white = new White();
         black = new Black();
@@ -50,7 +50,6 @@ public class Goban {
 
     public void clear_board() {
         board = new Stone[NB_BOXES][NB_BOXES];
-        //@TODO Peut mieux faire en complexité
         for (Stone[] ligne : board) {
             Arrays.fill(ligne, Stone.UNDEFINED);
         }
@@ -80,24 +79,25 @@ public class Goban {
     public void play(String[] arguments) {
         String[] message = getMessage(arguments);
         String color = message[INDEX_COLOR_PLAY - 1]; // @FIXME Renommer la variable
+        Player[] players = getPlayers(color);
+        Player player = players[0], player2 = players[1];
         String coordonneesString = message[INDEX_COORDONNEES_PLAY - 1]; // @FIXME Renommer la variable
         char[] coordonneesLine = new char[coordonneesString.length() - 1];
         coordonneesString.getChars(1,coordonneesString.length(),coordonneesLine,0);
         char column = coordonneesString.charAt(0);
-        int columnInt = column - INDEX_BEGINNING_ALPHABET; // @FIXME Renommer variable
+        int columnInt = column - INDEX_BEGINNING_ALPHABET; // @FIXME Renommer la variable
         int line = Integer.parseInt(String.valueOf(coordonneesLine)) - 1;
-        if (!isPlayable(color,column, columnInt, line)) {
+        if (!isPlayable(color,column, columnInt, line, player, player2)) {
             return; // @TODO Changer l'affichage de "="" à "?"
         }
-        addPiece(color, columnInt, line);
+        addPiece(player, columnInt, line);
         System.out.println(showboard());
 
-        // @TODO Ajouter Stone de la couleur du joueur qui a lancé play
         // @TODO Vérifier si une pièce ne doit pas être prise
     }
 
-    public boolean isPlayable(String color, char column, int columnInt, int line) {
-        return !(checkMessage(color, column, line) && !boxIsEmpty(columnInt, line)
+    public boolean isPlayable(String color, char column, int columnInt, int line, Player player, Player player2) {
+        return (checkMessage(color, column, line, player, player2) && boxIsEmpty(columnInt, line)
                 && !checkSuicide());
     }
 
@@ -109,11 +109,11 @@ public class Goban {
         return getPiece(column, line) == Stone.UNDEFINED;
     }
 
-    public void addPiece (String player, int column, int line) { // @TODO Remplacer String player par IPlayer player
-        Stone color;
-        if (player.equals("BLACK"))
+    public void addPiece (Player player, int column, int line) {
+        Stone color = Stone.UNDEFINED;
+        if (player.getColor().equals("BLACK"))
             color = Stone.BLACK;
-        else
+        else if (player.getColor().equals("WHITE"))
             color = Stone.WHITE;
         board[column][line] = color;
     }
@@ -129,11 +129,19 @@ public class Goban {
         return message;
     }
 
-    private boolean checkMessage(String color, char column, int line) {
+    public Player[] getPlayers(String color) {
+        Player[] players = new Player[2];
+        players[0] = color.equals("BLACK") ? black : color.equals("WHITE") ? white : null;
+        players[1] = color.equals("BLACK") ? white : color.equals("WHITE") ? black : null;
+        return players;
+    }
+
+    private boolean checkMessage(String color, char column, int line, Player player, Player player2) {
         try {
-            if (!color.equals("BLACK") && !color.equals("WHITE"))
+            if (player == null)
                 throw new IllegalArgumentException("Pas BLACK ou WHITE");
-            // @TODO Vérifier que c'est bien le tour de la personne qui a appelé la commande
+            if (!changeTurn(player, player2))
+                throw new IllegalArgumentException("Ce n'est pas votre tour, soyez patient.");
             if (column < (char) INDEX_BEGINNING_ALPHABET || column > (char) (INDEX_BEGINNING_ALPHABET + NB_BOXES))
                 throw new IndexOutOfBoundsException("Lettre pas dans les bornes");
             if (line < FIRST_LINE - 1 || line > NB_BOXES)
@@ -142,6 +150,16 @@ public class Goban {
         } catch (Exception e) {
             System.out.println("Mauvais paramètres. Erreur : " + e.getLocalizedMessage());
             return false;
+        }
+    }
+
+    public boolean changeTurn(Player player, Player player2) {
+        if (!player.getIsTurn())
+            return false;
+        else {
+            player.setIsTurn(false);
+            player2.setIsTurn(true);
+            return true;
         }
     }
 }

@@ -5,14 +5,25 @@ import go.Player;
 import go.Stone;
 
 public class White implements Player {
+    boolean isTurn = true;
     private int nbCaptured = 0;
-    private char color = 'W';
+    public String getColor() {
+        return "WHITE";
+    }
 
     public int getNbCaptured() {
         return nbCaptured;
     }
 
-    public String toString() {
+    public void setIsTurn(boolean pIsTurn) {
+        isTurn = pIsTurn;
+    }
+
+    public boolean getIsTurn() {
+        return isTurn;
+    }
+
+    public String stringifyNbCaptured() {
         return "WHITE (0) has captured " + nbCaptured + " pieces\n";
     }
 }

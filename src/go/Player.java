@@ -1,6 +1,9 @@
 package go;
 
 public interface Player {
+    String getColor();
     int getNbCaptured();
-    String toString();
+    void setIsTurn(boolean pIsTurn);
+    boolean getIsTurn();
+    String stringifyNbCaptured();
 }

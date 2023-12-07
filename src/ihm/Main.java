@@ -5,6 +5,8 @@ import go.Goban;
 import java.util.Scanner;
 
 public class Main {
+    // @TODO Rajouter un booléen pour savoir si on affiche nb_commands
+    // @TODO Donc changer la méthode d'affichage en fonction de ce booléen
     private static int nb_commands = 0;
     public static String getCommand(String[] arguments) {
         StringBuilder tmp = new StringBuilder();
@@ -36,7 +38,7 @@ public class Main {
             command = getCommand(arguments); // @FIXME Vraiment utile ?
             arguments = command.split(" ");
             if (arguments[0].equals("BOARDSIZE")) {
-                // @TODO Créer méthode callBoardsize
+                // @TODO Créer méthode boardsize dans le Main
                 if (arguments.length > 1) { // S'il y a quelque chose après "boardsize"
                     try { // Si le prochain paramètre est un entier, on appelle la fonction boardsize()
                         goban.boardsize(Integer.parseInt(command.split(" ")[1]));
