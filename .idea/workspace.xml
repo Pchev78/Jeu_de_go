@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="318227c9-6a7f-4c60-8c55-a25c1ae14423" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/go/Goban.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Goban.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ihm/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ihm/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,7 +33,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Main.executor": "Run",
+    "Application.Main.executor": "Debug",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
@@ -74,7 +74,9 @@
       <workItem from="1701771505759" duration="3910000" />
       <workItem from="1701796103856" duration="1352000" />
       <workItem from="1701885143050" duration="503000" />
-      <workItem from="1701885839463" duration="1471000" />
+      <workItem from="1701885839463" duration="3604000" />
+      <workItem from="1701905893971" duration="5220000" />
+      <workItem from="1701946282479" duration="2712000" />
     </task>
     <servers />
   </component>

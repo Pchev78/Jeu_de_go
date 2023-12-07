@@ -78,22 +78,29 @@ public class Goban {
 
     public void play(String[] arguments) {
         String[] message = getMessage(arguments);
-        String color = message[INDEX_COLOR_PLAY - 1]; // @FIXME Renommer la variable
-        Player[] players = getPlayers(color);
+        String messageColor = message[INDEX_COLOR_PLAY - 1];
+        Player[] players = getPlayers(messageColor);
         Player player = players[0], player2 = players[1];
-        String coordonneesString = message[INDEX_COORDONNEES_PLAY - 1]; // @FIXME Renommer la variable
-        char[] coordonneesLine = new char[coordonneesString.length() - 1];
-        coordonneesString.getChars(1,coordonneesString.length(),coordonneesLine,0);
-        char column = coordonneesString.charAt(0);
-        int columnInt = column - INDEX_BEGINNING_ALPHABET; // @FIXME Renommer la variable
-        int line = Integer.parseInt(String.valueOf(coordonneesLine)) - 1;
-        if (!isPlayable(color,column, columnInt, line, player, player2)) {
-            return; // @TODO Changer l'affichage de "="" à "?"
+
+        String coordinates = message[INDEX_COORDONNEES_PLAY - 1]; // @FIXME Renommer la variable
+        char[] line = getCoordinates(coordinates);
+        char column = coordinates.charAt(0);
+
+        int columnIndex = column - INDEX_BEGINNING_ALPHABET; // @FIXME Renommer la variable
+        int lineIndex = Integer.parseInt(String.valueOf(line)) - 1;
+        if (isPlayable(messageColor,column, columnIndex, lineIndex, player, player2)) {
+            addPiece(player, columnIndex, lineIndex);
+            System.out.println(showboard());
         }
-        addPiece(player, columnInt, line);
-        System.out.println(showboard());
+        // @TODO Changer l'affichage de "="" à "?"
 
         // @TODO Vérifier si une pièce ne doit pas être prise
+    }
+
+    public char[] getCoordinates(String coordinatesArg) {
+        char[] coordinates = new char[coordinatesArg.length() - 1]; // @FIXME Renommer la variable
+        coordinatesArg.getChars(1,coordinatesArg.length(),coordinates,0);
+        return coordinates;
     }
 
     public boolean isPlayable(String color, char column, int columnInt, int line, Player player, Player player2) {
@@ -110,12 +117,12 @@ public class Goban {
     }
 
     public void addPiece (Player player, int column, int line) {
-        Stone color = Stone.UNDEFINED;
+        Stone piece = Stone.UNDEFINED;
         if (player.getColor().equals("BLACK"))
-            color = Stone.BLACK;
+            piece = Stone.BLACK;
         else if (player.getColor().equals("WHITE"))
-            color = Stone.WHITE;
-        board[column][line] = color;
+            piece = Stone.WHITE;
+        board[column][line] = piece;
     }
 
     public Stone getPiece(int column, int line) {
@@ -153,6 +160,12 @@ public class Goban {
         }
     }
 
+    /**
+     * Permet d'inverser les tours.
+     * @param player : joueur qui va terminer son tour
+     * @param player2 : joueur qui va jouer au tour suivant
+     * @return true si c'est le tour de player, false sinon
+     */
     public boolean changeTurn(Player player, Player player2) {
         if (!player.getIsTurn())
             return false;
