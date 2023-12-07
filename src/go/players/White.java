@@ -24,6 +24,6 @@ public class White implements Player {
     }
 
     public String stringifyNbCaptured() {
-        return "WHITE (0) has captured " + nbCaptured + " pieces\n";
+        return "WHITE (0) has captured " + nbCaptured + " stones";
     }
 }

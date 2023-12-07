@@ -6,17 +6,18 @@ import go.players.White;
 import java.util.Arrays;
 
 public class Goban {
-    private static int NB_BOXES = 19; // Nombre par défaut, mais pourra évoluer si on appelle boardsize
+    // Nombres par défaut, mais pourront évoluer si on appelle boardsize
+    private static int NB_BOXES = 19, INDEX_SHOW_CAPTURED_WHITE = 10, INDEX_SHOW_CAPTURED_BLACK = 9;
     private static final int FIRST_LINE = 1;
     private static final int MIN_BOXES = 2, MAX_BOXES = 25;
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
-    private static final int NB_ARGUMENTS_PLAY = 2, NB_COORDONNEES = 2; // 2 coordonnées : la colonne et la ligne
+    private static final int NB_ARGUMENTS_PLAY = 2, NB_COORDINATES = 2; // 2 coordonnées : la colonne et la ligne
     private static final int INDEX_COLOR_PLAY = 1, INDEX_COORDONNEES_PLAY = 2;
     private static final int INDEX_COLUMNS = 0, INDEX_LINES = 1;
+    private static final int INDEX_SHOW_CAPTURED = 10;
     private static String headerLetters; // Ligne composée de NB_CASES lettres
     private Stone[][] board;
-    private Player white;
-    private Player black;
+    private Player white, black;
     public Goban() {
         white = new White();
         black = new Black();
@@ -29,9 +30,7 @@ public class Goban {
     }
     private static String getHeader() {
         StringBuilder headerLetters= new StringBuilder();
-        headerLetters.append('\t'); // Correspond à la 1ʳᵉ colonne de la colonne. L'espace pourrait être remplacé par un /
-        if (NB_BOXES > 9)
-            headerLetters.append(' ');
+        headerLetters.append("   ");
         for (int i = INDEX_BEGINNING_ALPHABET; i < INDEX_BEGINNING_ALPHABET + NB_BOXES; i++)
             headerLetters.append((char) i).append(' ');
         return headerLetters.toString();
@@ -42,6 +41,14 @@ public class Goban {
         else if (nbBoxes < MIN_BOXES)
             throw new IllegalArgumentException("Nombre de cases trop petit");
         else {
+            if (nbBoxes > INDEX_SHOW_CAPTURED) {
+                INDEX_SHOW_CAPTURED_WHITE -= NB_BOXES - nbBoxes;
+                INDEX_SHOW_CAPTURED_BLACK -= NB_BOXES - nbBoxes;
+            } else {
+                // On ne peut pas aller en dessous de ces valeurs !
+                INDEX_SHOW_CAPTURED_WHITE = 1;
+                INDEX_SHOW_CAPTURED_BLACK = 0;
+            }
             NB_BOXES = nbBoxes;
             headerLetters = getHeader();
             clear_board();
@@ -57,26 +64,29 @@ public class Goban {
 
     public String showboard() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\t").append("WHITE (0) has captured ").append(white.getNbCaptured()).append(" pieces\n");
-        sb.append("\t").append("BLACK (X) has captured ").append(black.getNbCaptured()).append(" pieces\n");
-
         sb.append("\n").append(headerLetters); // 1ʳᵉ ligne
 
         for (int i = NB_BOXES - 1; i >= 0; i--) { // Ligne
-            sb.append("\n  ").append(i + 1);
-            if (i < 9 && NB_BOXES >= 10)
+            sb.append("\n");
+            if (i < 9)
                 sb.append(' ');
+            sb.append(i + 1);
             for (int j = 0; j < NB_BOXES; j++) // Colonne
                 sb.append(' ').append(board[j][i]);
-            if (i < 9 && NB_BOXES >= 10)
-                sb.append(' ');
+
             sb.append(' ').append(i + 1);
+
+            if(i == INDEX_SHOW_CAPTURED_WHITE)
+                sb.append("     ").append(white.stringifyNbCaptured());
+            else if (i == INDEX_SHOW_CAPTURED_BLACK)
+                sb.append("     ").append(black.stringifyNbCaptured());
         }
         sb.append("\n").append(headerLetters).append("\n"); // Dernière ligne
         return sb.toString();
     }
 
     public void play(String[] arguments) {
+        //@FIXME Enlever nombres magiques
         String[] message = getMessage(arguments);
         String messageColor = message[INDEX_COLOR_PLAY - 1];
         Player[] players = getPlayers(messageColor);

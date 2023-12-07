@@ -22,6 +22,6 @@ public class Black implements Player {
     }
 
     public String stringifyNbCaptured() {
-        return "BLACK (X) has captured " + nbCaptured + " pieces\n";
+        return "BLACK (X) has captured " + nbCaptured + " stones";
     }
 }
