@@ -11,7 +11,7 @@ public class Goban {
     private static final int FIRST_LINE = 1;
     private static final int MIN_BOXES = 2, MAX_BOXES = 25;
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
-    private static final int NB_ARGUMENTS_PLAY = 2, NB_COORDINATES = 2; // 2 coordonnées : la colonne et la ligne
+    private static final int NB_ARGUMENTS_PLAY = 2;
     private static final int INDEX_COLOR_PLAY = 1, INDEX_COORDONNEES_PLAY = 2;
     private static final int INDEX_COLUMNS = 0, INDEX_LINES = 1;
     private static final int INDEX_SHOW_CAPTURED = 10;
@@ -71,7 +71,7 @@ public class Goban {
             if (i < 9)
                 sb.append(' ');
             sb.append(i + 1);
-            for (int j = 0; j < NB_BOXES; j++) // Colonne
+            for (int j = 0; j < NB_BOXES; j++)
                 sb.append(' ').append(board[j][i]);
 
             sb.append(' ').append(i + 1);
@@ -85,6 +85,49 @@ public class Goban {
         return sb.toString();
     }
 
+
+
+    private String[] getMessage(String[] arguments) {
+        String[] message = new String[NB_ARGUMENTS_PLAY];
+        message[INDEX_COLOR_PLAY - 1] = arguments[INDEX_COLOR_PLAY];
+        message[INDEX_COORDONNEES_PLAY - 1] = arguments[INDEX_COORDONNEES_PLAY];
+        return message;
+    }
+
+    public char[] getCoordinates(String coordinatesArg) {
+        char[] coordinates = new char[coordinatesArg.length() - 1]; // @FIXME Renommer la variable
+        coordinatesArg.getChars(1,coordinatesArg.length(),coordinates,0);
+        return coordinates;
+    }
+
+    public Player[] getPlayers(String color) {
+        Player[] players = new Player[2];
+        players[0] = color.equals("BLACK") ? black : color.equals("WHITE") ? white : null;
+        players[1] = color.equals("BLACK") ? white : color.equals("WHITE") ? black : null;
+        return players;
+    }
+
+    public Stone getPiece(int column, int line) {
+        return board[column][line];
+    }
+
+    private boolean checkMessage(String color, char column, int line, Player player, Player player2) {
+        try {
+            if (player == null)
+                throw new IllegalArgumentException("Pas BLACK ou WHITE");
+            if (!changeTurn(player, player2))
+                throw new IllegalArgumentException("Ce n'est pas votre tour, soyez patient.");
+            if (column < (char) INDEX_BEGINNING_ALPHABET || column > (char) (INDEX_BEGINNING_ALPHABET + NB_BOXES))
+                throw new IndexOutOfBoundsException("Lettre pas dans les bornes");
+            if (line < FIRST_LINE - 1 || line > NB_BOXES)
+                throw new IndexOutOfBoundsException("Nombre pas dans les bornes");
+            return true;
+        } catch (Exception e) {
+            System.out.println("Mauvais paramètres. Erreur : " + e.getLocalizedMessage());
+            return false;
+        }
+    }
+
     public void play(String[] arguments) {
         //@FIXME Enlever nombres magiques
         String[] message = getMessage(arguments);
@@ -92,11 +135,11 @@ public class Goban {
         Player[] players = getPlayers(messageColor);
         Player player = players[0], player2 = players[1];
 
-        String coordinates = message[INDEX_COORDONNEES_PLAY - 1]; // @FIXME Renommer la variable
+        String coordinates = message[INDEX_LINES];
         char[] line = getCoordinates(coordinates);
-        char column = coordinates.charAt(0);
+        char column = coordinates.charAt(INDEX_COLUMNS);
 
-        int columnIndex = column - INDEX_BEGINNING_ALPHABET; // @FIXME Renommer la variable
+        int columnIndex = column - INDEX_BEGINNING_ALPHABET;
         int lineIndex = Integer.parseInt(String.valueOf(line)) - 1;
         if (isPlayable(messageColor,column, columnIndex, lineIndex, player, player2)) {
             addPiece(player, columnIndex, lineIndex);
@@ -107,11 +150,7 @@ public class Goban {
         // @TODO Vérifier si une pièce ne doit pas être prise
     }
 
-    public char[] getCoordinates(String coordinatesArg) {
-        char[] coordinates = new char[coordinatesArg.length() - 1]; // @FIXME Renommer la variable
-        coordinatesArg.getChars(1,coordinatesArg.length(),coordinates,0);
-        return coordinates;
-    }
+
 
     public boolean isPlayable(String color, char column, int columnInt, int line, Player player, Player player2) {
         return (checkMessage(color, column, line, player, player2) && boxIsEmpty(columnInt, line)
@@ -135,40 +174,9 @@ public class Goban {
         board[column][line] = piece;
     }
 
-    public Stone getPiece(int column, int line) {
-        return board[column][line];
-    }
 
-    private String[] getMessage(String[] arguments) {
-        String[] message = new String[NB_ARGUMENTS_PLAY];
-        message[INDEX_COLOR_PLAY - 1] = arguments[INDEX_COLOR_PLAY];
-        message[INDEX_COORDONNEES_PLAY - 1] = arguments[INDEX_COORDONNEES_PLAY];
-        return message;
-    }
 
-    public Player[] getPlayers(String color) {
-        Player[] players = new Player[2];
-        players[0] = color.equals("BLACK") ? black : color.equals("WHITE") ? white : null;
-        players[1] = color.equals("BLACK") ? white : color.equals("WHITE") ? black : null;
-        return players;
-    }
 
-    private boolean checkMessage(String color, char column, int line, Player player, Player player2) {
-        try {
-            if (player == null)
-                throw new IllegalArgumentException("Pas BLACK ou WHITE");
-            if (!changeTurn(player, player2))
-                throw new IllegalArgumentException("Ce n'est pas votre tour, soyez patient.");
-            if (column < (char) INDEX_BEGINNING_ALPHABET || column > (char) (INDEX_BEGINNING_ALPHABET + NB_BOXES))
-                throw new IndexOutOfBoundsException("Lettre pas dans les bornes");
-            if (line < FIRST_LINE - 1 || line > NB_BOXES)
-                throw new IndexOutOfBoundsException("Nombre pas dans les bornes");
-            return true;
-        } catch (Exception e) {
-            System.out.println("Mauvais paramètres. Erreur : " + e.getLocalizedMessage());
-            return false;
-        }
-    }
 
     /**
      * Permet d'inverser les tours.
