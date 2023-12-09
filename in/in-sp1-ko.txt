@@ -1,0 +1,5 @@
+boardsize 1
+boardsize 20
+boardsife 2
+showboard 17
+20 showboard 62
