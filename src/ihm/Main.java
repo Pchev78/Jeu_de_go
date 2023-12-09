@@ -1,67 +1,80 @@
 package ihm;
 
 import go.Goban;
-
 import java.util.Scanner;
 
 public class Main {
-    // @TODO Rajouter un booléen pour savoir si on affiche nb_commands
-    // @TODO Donc changer la méthode d'affichage en fonction de ce booléen
-    private static int nb_commands = 0;
+    private static boolean showNbCommands = false;
+    private static int nb_commands;
+    private static Goban goban = new Goban();
     public static String getCommand(String[] arguments) {
-        StringBuilder tmp = new StringBuilder();
+        StringBuilder sb = new StringBuilder();
         boolean first = true;
-        for (String s: arguments) {
-            if (!first)
-                tmp.append(" ");
-            tmp.append(s);
-            first = false;
-        }
+        int i = 0;
         try { // S'il y a un nombre avant la commande
             nb_commands = Integer.parseInt(arguments[0]);
+            showNbCommands = true;
+            i = 1;
         } catch (NumberFormatException e) {
-            return tmp.toString();
+            showNbCommands = false;
         }
-        tmp.delete(0,2); // On supprime le 1er argument
-        return tmp.toString();
+
+        for (;i < arguments.length; i ++) {
+            if (!first)
+                sb.append(" ");
+            sb.append(arguments[i]);
+            first = false;
+        }
+        return sb.toString();
+    }
+
+    public static void callBoardsize(String[] arguments, String command) {
+        if (arguments.length > 1) { // S'il y a quelque chose après "boardsize"
+            try { // Si le prochain paramètre est un entier, on appelle la fonction boardsize()
+                goban.boardsize(Integer.parseInt(command.split(" ")[1]));
+                System.out.println(displayOutput("") + '\n');
+            } catch (IllegalArgumentException exception) {
+                System.out.println(displayOutput("invalid number") + '\n');
+            }
+        } else
+            System.out.println(displayOutput("unknown command") + '\n');
+    }
+
+    public static String displayOutput(String error) {
+        StringBuilder sb = new StringBuilder();
+        if (!error.isEmpty())
+            sb.append("? ").append(error);
+        else
+            sb.append('=');
+        if (showNbCommands)
+            sb.append(nb_commands);
+        return sb.toString();
     }
 
     public static void main(String[] args)throws IllegalArgumentException {
         Scanner sc = new Scanner(System.in);
         String input = "", command;
-        Goban goban = new Goban();
         do {
-            nb_commands++;
             input = sc.nextLine(); // Lire la prochaine ligne
             input = input.replaceAll("\\s+", " ").trim().toUpperCase();
             String[] arguments = input.split(" ");
             command = getCommand(arguments); // @FIXME Vraiment utile ?
             arguments = command.split(" ");
             if (arguments[0].equals("BOARDSIZE")) {
-                // @TODO Créer méthode boardsize dans le Main
-                if (arguments.length > 1) { // S'il y a quelque chose après "boardsize"
-                    try { // Si le prochain paramètre est un entier, on appelle la fonction boardsize()
-                        goban.boardsize(Integer.parseInt(command.split(" ")[1]));
-                        System.out.println("=" + nb_commands + '\n');
-                    } catch (IllegalArgumentException exception) {
-                        System.out.println("?" + nb_commands + " invalid number\n");
-                    }
-                } else
-                    System.out.println("?" + nb_commands + " invalid command\n");
+                callBoardsize(arguments, command);
             } else if (command.equals("QUIT")) {
-                System.out.println("=" + nb_commands + '\n');
+                System.out.println(displayOutput("") + '\n');
                 break;
             } else if (command.equals("CLEAR_BOARD")) {
-                System.out.println("=" + nb_commands + '\n');
+                System.out.println(displayOutput("") + '\n');
                 goban.clear_board();
             } else if (command.equals("SHOWBOARD")) {
-                System.out.println("=" + nb_commands);
+                System.out.println(displayOutput(""));
                 System.out.println(goban.showboard());
             } else if (arguments[0].equals("PLAY")) {
-                System.out.println("=" + nb_commands + '\n');
-                goban.play(arguments);
+                System.out.println(displayOutput(goban.play(arguments)) + '\n');
             } else
-                System.out.println("?" + nb_commands + '\n');
+                System.out.println(displayOutput("unknown command") + '\n');
         } while (true);
         sc.close();
     }

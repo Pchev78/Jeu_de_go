@@ -9,7 +9,7 @@ public class Goban {
     // Nombres par défaut, mais pourront évoluer si on appelle boardsize
     private static int NB_BOXES = 19, INDEX_SHOW_CAPTURED_WHITE = 10, INDEX_SHOW_CAPTURED_BLACK = 9;
     private static final int FIRST_LINE = 1;
-    private static final int MIN_BOXES = 2, MAX_BOXES = 25;
+    private static final int MIN_BOXES = 2, MAX_BOXES = 19;
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
     private static final int NB_ARGUMENTS_PLAY = 2;
     private static final int INDEX_COLOR_PLAY = 1, INDEX_COORDONNEES_PLAY = 2;
@@ -64,7 +64,7 @@ public class Goban {
 
     public String showboard() {
         StringBuilder sb = new StringBuilder();
-        sb.append("\n").append(headerLetters); // 1ʳᵉ ligne
+        sb.append(headerLetters); // 1ʳᵉ ligne
 
         for (int i = NB_BOXES - 1; i >= 0; i--) { // Ligne
             sb.append("\n");
@@ -113,23 +113,18 @@ public class Goban {
 
     private boolean checkMessage(String color, char column, int line, Player player, Player player2) {
         try {
-            if (player == null)
-                throw new IllegalArgumentException("Pas BLACK ou WHITE");
-            if (!changeTurn(player, player2))
-                throw new IllegalArgumentException("Ce n'est pas votre tour, soyez patient.");
-            if (column < (char) INDEX_BEGINNING_ALPHABET || column > (char) (INDEX_BEGINNING_ALPHABET + NB_BOXES))
-                throw new IndexOutOfBoundsException("Lettre pas dans les bornes");
-            if (line < FIRST_LINE - 1 || line > NB_BOXES)
-                throw new IndexOutOfBoundsException("Nombre pas dans les bornes");
+            if (player == null || column < (char) INDEX_BEGINNING_ALPHABET ||
+                    column > (char) (INDEX_BEGINNING_ALPHABET + NB_BOXES) || line < FIRST_LINE - 1 || line > NB_BOXES)
+                throw new IndexOutOfBoundsException("invalid color or coordinate");
+//            if (!changeTurn(player, player2)) // FIXME Pas nécessaire tant qu'il n'y pas D'IA ?
+//                throw new IllegalArgumentException("Ce n'est pas votre tour, soyez patient.");
             return true;
         } catch (Exception e) {
-            System.out.println("Mauvais paramètres. Erreur : " + e.getLocalizedMessage());
             return false;
         }
     }
 
-    public void play(String[] arguments) {
-        //@FIXME Enlever nombres magiques
+    public String play(String[] arguments) {
         String[] message = getMessage(arguments);
         String messageColor = message[INDEX_COLOR_PLAY - 1];
         Player[] players = getPlayers(messageColor);
@@ -141,11 +136,13 @@ public class Goban {
 
         int columnIndex = column - INDEX_BEGINNING_ALPHABET;
         int lineIndex = Integer.parseInt(String.valueOf(line)) - 1;
-        if (isPlayable(messageColor,column, columnIndex, lineIndex, player, player2)) {
+        boolean playable = isPlayable(messageColor,column, columnIndex, lineIndex, player, player2);
+        String output = "";
+        if (playable)
             addPiece(player, columnIndex, lineIndex);
-            System.out.println(showboard());
-        }
-        // @TODO Changer l'affichage de "="" à "?"
+        else
+            output = "invalid color or coordinate";
+        return output;
 
         // @TODO Vérifier si une pièce ne doit pas être prise
     }
