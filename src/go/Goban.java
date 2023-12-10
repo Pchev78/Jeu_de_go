@@ -108,7 +108,11 @@ public class Goban {
     }
 
     public Stone getPiece(int column, int line) {
-        return board[column][line];
+        try {
+            return board[column][line];
+        } catch (Exception e) { // Si la case est en dehors des limites du tableau
+            return Stone.UNDEFINED;
+        }
     }
 
     private boolean checkMessage(String color, char column, int line, Player player, Player player2) {
@@ -142,9 +146,12 @@ public class Goban {
             addPiece(player, columnIndex, lineIndex);
         else
             output = "invalid color or coordinate";
-        return output;
 
+
+//        System.out.println(hasEmptyNeighbor(columnIndex, lineIndex));
+        System.out.println(checkNeighbor(player, columnIndex, lineIndex));
         // @TODO Vérifier si une pièce ne doit pas être prise
+        return output;
     }
 
 
@@ -171,9 +178,41 @@ public class Goban {
         board[column][line] = piece;
     }
 
+    public boolean isLockedUp(Stone color, Stone ennemyColor, int column, int line) {
+        int i = 1;
+        if (!hasEmptyNeighbor(column, line)) {
+            Stone neighborL = board[column - i][line];
+            Stone neighborR = board[column + i][line];
+            Stone neighborT = board[column][line + i];
+            Stone neighborB = board[column + 1][line - i];
+            while (neighborL == color && neighborR == color &&
+                    neighborT == color && neighborB == color) {
+                i++;
+                // FIXME Boucle infinie car sort des limites du tableau
+                neighborL = board[column - i][line];
+                neighborR = board[column + 1][line];
+                neighborT = board[column][line + i];
+                neighborB = board[column + 1][line - i];
+            }
+            if (neighborL == color && neighborR == color &&
+                    neighborT == color && neighborB == color);
+        }
+        return false;
+    }
 
+    public Stone getNeighbor(Stone color, int column, int line) {
+        return board[column][line];
+    }
 
+    private boolean hasEmptyNeighbor(int column, int line) {
+        return boxIsEmpty(column - 1, line) && boxIsEmpty(column, line - 1)
+                && boxIsEmpty(column + 1, line) && boxIsEmpty(column, line + 1);
+    }
 
+    public boolean checkNeighbor(Player player, int column, int line) {
+        Stone color = player.getColor().equals("BLACK") ? Stone.BLACK : Stone.WHITE;
+        return board[column][line] != color;
+    }
 
     /**
      * Permet d'inverser les tours.
