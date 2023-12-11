@@ -217,12 +217,12 @@ public class Goban {
     private boolean isCapturerHelper(Stone color, int column, int line, boolean[][] visited){
         // Vérifiez si les coordonnées sont hors limites
         if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
-            return false; // En dehors des limites, donc pas capturé
+            return true; // En dehors des limites, donc pas capturé
         }
 
         // Si déjà visité ou si la case n'est pas de la couleur spécifiée, retournez false
         if (visited[column][line] || board[column][line] != color) {
-            return false;
+            return true;
         }
 
         // Marquez cette pierre comme visitée
