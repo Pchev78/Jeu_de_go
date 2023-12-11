@@ -1,0 +1,8 @@
+boardsize 5
+play white B2
+play black B1
+play black B3
+play black A2
+showboard
+play black C2
+showboard

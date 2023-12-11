@@ -33,11 +33,13 @@ public class Main {
             try { // Si le prochain paramètre est un entier, on appelle la fonction boardsize()
                 goban.boardsize(Integer.parseInt(command.split(" ")[1]));
                 System.out.println(displayOutput("") + '\n');
+            } catch (NumberFormatException exception) {
+                System.out.println(displayOutput("boardsize not an integer") + '\n');
             } catch (IllegalArgumentException exception) {
-                System.out.println(displayOutput("invalid number") + '\n');
+                System.out.println(displayOutput("unacceptable size") + '\n');
             }
         } else
-            System.out.println(displayOutput("unknown command") + '\n');
+            System.out.println(displayOutput("boardsize not an integer") + '\n');
     }
 
     public static String displayOutput(String error) {
@@ -51,7 +53,7 @@ public class Main {
         return sb.toString();
     }
 
-    public static void main(String[] args)throws IllegalArgumentException {
+    public static void main(String[] args) throws IllegalArgumentException {
         Scanner sc = new Scanner(System.in);
         String input = "", command;
         do {
