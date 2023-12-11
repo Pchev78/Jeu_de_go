@@ -149,7 +149,7 @@ public class Goban {
 
 
         // @TODO Vérifier si une pièce ne doit pas être prise
-        if (isCaptured())
+        //if (isCaptured())
         return output;
     }
 
