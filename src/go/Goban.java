@@ -95,7 +95,7 @@ public class Goban {
     }
 
     public char[] getCoordinates(String coordinatesArg) {
-        char[] coordinates = new char[coordinatesArg.length() - 1]; // @FIXME Renommer la variable
+        char[] coordinates = new char[coordinatesArg.length() - 1];
         coordinatesArg.getChars(1,coordinatesArg.length(),coordinates,0);
         return coordinates;
     }
@@ -148,9 +148,8 @@ public class Goban {
             output = "invalid color or coordinate";
 
 
-//        System.out.println(hasEmptyNeighbor(columnIndex, lineIndex));
-        System.out.println(checkNeighbor(player, columnIndex, lineIndex));
         // @TODO Vérifier si une pièce ne doit pas être prise
+        if (isCaptured())
         return output;
     }
 
@@ -209,13 +208,12 @@ public class Goban {
             return true;
         }
     }
-    public boolean isCapturer(Stone color,int column, int line){
+    public boolean isCaptured(Stone color,int column, int line) {
         boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Tableau pour suivre les pierres visitées
-        return isCapturerHelper(color, column, line, visited);
+        return isCapturedHelper(color, column, line, visited);
     }
 
-    private boolean isCapturerHelper(Stone color, int column, int line, boolean[][] visited){
-        // Vérifiez si les coordonnées sont hors limites
+    private boolean isCapturedHelper(Stone color, int column, int line, boolean[][] visited) {
         if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
             return false; // En dehors des limites, donc pas capturé
         }
@@ -229,26 +227,26 @@ public class Goban {
         visited[column][line] = true;
 
         // Si la pierre a une liberté, elle n'est pas capturée
-        if (isLiberty(column, line)) {
+        if (hasLiberty(column, line)) {
             return false;
         }
 
         // Vérifiez les pierres connectées dans toutes les directions
         // Si l'une des directions renvoie false, cela signifie que la pierre n'est pas entièrement capturée
-        return isCapturerHelper(color, column - 1, line, visited) &&
-                isCapturerHelper(color, column + 1, line, visited) &&
-                isCapturerHelper(color, column, line - 1, visited) &&
-                isCapturerHelper(color, column, line + 1, visited);
+        return isCapturedHelper(color, column - 1, line, visited) &&
+                isCapturedHelper(color, column + 1, line, visited) &&
+                isCapturedHelper(color, column, line - 1, visited) &&
+                isCapturedHelper(color, column, line + 1, visited);
     }
 
 
 
 
-    private boolean isLiberty(int column, int line) {
+    private boolean hasLiberty(int column, int line) {
         if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
             return false;
         }
-        return board[column][line] == Stone.UNDEFINED;
+        return boxIsEmpty(column, line);
     }
 
 }

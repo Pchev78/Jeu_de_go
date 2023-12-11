@@ -1,0 +1,11 @@
+=
+=5
+=
+   A B 
+ 2 . . 2     WHITE (0) has captured 0 stones
+ 1 . . 1     BLACK (X) has captured 0 stones
+   A B 
+? unknown command20
+Exception in thread "main" java.util.NoSuchElementException: No line found
+	at java.base/java.util.Scanner.nextLine(Scanner.java:1660)
+	at ihm.Main.main(Main.java:59)
