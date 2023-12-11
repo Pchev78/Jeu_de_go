@@ -178,27 +178,7 @@ public class Goban {
         board[column][line] = piece;
     }
 
-    public boolean isLockedUp(Stone color, Stone ennemyColor, int column, int line) {
-        int i = 1;
-        if (!hasEmptyNeighbor(column, line)) {
-            Stone neighborL = board[column - i][line];
-            Stone neighborR = board[column + i][line];
-            Stone neighborT = board[column][line + i];
-            Stone neighborB = board[column + 1][line - i];
-            while (neighborL == color && neighborR == color &&
-                    neighborT == color && neighborB == color) {
-                i++;
-                // FIXME Boucle infinie car sort des limites du tableau
-                neighborL = board[column - i][line];
-                neighborR = board[column + 1][line];
-                neighborT = board[column][line + i];
-                neighborB = board[column + 1][line - i];
-            }
-            if (neighborL == color && neighborR == color &&
-                    neighborT == color && neighborB == color);
-        }
-        return false;
-    }
+
 
     public Stone getNeighbor(Stone color, int column, int line) {
         return board[column][line];
@@ -229,4 +209,46 @@ public class Goban {
             return true;
         }
     }
+    public boolean isCapturer(Stone color,int column, int line){
+        boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Tableau pour suivre les pierres visitées
+        return isCapturerHelper(color, column, line, visited);
+    }
+
+    private boolean isCapturerHelper(Stone color, int column, int line, boolean[][] visited){
+        // Vérifiez si les coordonnées sont hors limites
+        if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
+            return false; // En dehors des limites, donc pas capturé
+        }
+
+        // Si déjà visité ou si la case n'est pas de la couleur spécifiée, retournez false
+        if (visited[column][line] || board[column][line] != color) {
+            return false;
+        }
+
+        // Marquez cette pierre comme visitée
+        visited[column][line] = true;
+
+        // Si la pierre a une liberté, elle n'est pas capturée
+        if (isLiberty(column, line)) {
+            return false;
+        }
+
+        // Vérifiez les pierres connectées dans toutes les directions
+        // Si l'une des directions renvoie false, cela signifie que la pierre n'est pas entièrement capturée
+        return isCapturerHelper(color, column - 1, line, visited) &&
+                isCapturerHelper(color, column + 1, line, visited) &&
+                isCapturerHelper(color, column, line - 1, visited) &&
+                isCapturerHelper(color, column, line + 1, visited);
+    }
+
+
+
+
+    private boolean isLiberty(int column, int line) {
+        if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
+            return false;
+        }
+        return board[column][line] == Stone.UNDEFINED;
+    }
+
 }
