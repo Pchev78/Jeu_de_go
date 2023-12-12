@@ -9,10 +9,10 @@ public class Goban {
     // Nombres par défaut, mais pourront évoluer si on appelle boardsize
     private static int NB_BOXES = 19, INDEX_SHOW_CAPTURED_WHITE = 10, INDEX_SHOW_CAPTURED_BLACK = 9;
     private static final int FIRST_LINE = 1;
-    private static final int MIN_BOXES = 2, MAX_BOXES = 19;
+    private static final int MIN_BOXES = 2, MAX_BOXES = 26;
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
     private static final int NB_ARGUMENTS_PLAY = 2;
-    private static final int INDEX_COLOR_PLAY = 1, INDEX_COORDONNEES_PLAY = 2;
+    private static final int INDEX_COLOR_PLAY = 1, INDEX_COORDINATES_PLAY = 2;
     private static final int INDEX_COLUMNS = 0, INDEX_LINES = 1;
     private static final int INDEX_SHOW_CAPTURED = 10;
     private static String headerLetters; // Ligne composée de NB_CASES lettres
@@ -90,7 +90,7 @@ public class Goban {
     private String[] getMessage(String[] arguments) {
         String[] message = new String[NB_ARGUMENTS_PLAY];
         message[INDEX_COLOR_PLAY - 1] = arguments[INDEX_COLOR_PLAY];
-        message[INDEX_COORDONNEES_PLAY - 1] = arguments[INDEX_COORDONNEES_PLAY];
+        message[INDEX_COORDINATES_PLAY - 1] = arguments[INDEX_COORDINATES_PLAY];
         return message;
     }
 
@@ -149,7 +149,7 @@ public class Goban {
 
 
         // @TODO Vérifier si une pièce ne doit pas être prise
-        //if (isCaptured())
+        //isCaptured(player, columnIndex, lineIndex);
         return output;
     }
 
@@ -208,31 +208,33 @@ public class Goban {
             return true;
         }
     }
-    public boolean isCaptured(Stone color,int column, int line) {
+    public boolean isCaptured(Player player, int column, int line) {
+        Stone piece = Stone.UNDEFINED;
+        if (player.getColor().equals("BLACK"))
+            piece = Stone.BLACK;
+        else if (player.getColor().equals("WHITE"))
+            piece = Stone.WHITE;
         boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Tableau pour suivre les pierres visitées
-        return isCapturedHelper(color, column, line, visited);
+        return isCapturedHelper(piece, column, line, visited);
     }
 
     private boolean isCapturedHelper(Stone color, int column, int line, boolean[][] visited) {
         if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
-            return true; // En dehors des limites, donc pas capturé
+            return false; // En dehors des limites, donc pas capturé
         }
 
-        // Si déjà visité ou si la case n'est pas de la couleur spécifiée, retournez false
         if (visited[column][line] || board[column][line] != color) {
-            return true;
-        }
-
-        // Marquez cette pierre comme visitée
-        visited[column][line] = true;
-
-        // Si la pierre a une liberté, elle n'est pas capturée
-        if (hasLiberty(column, line)) {
             return false;
         }
 
-        // Vérifiez les pierres connectées dans toutes les directions
-        // Si l'une des directions renvoie false, cela signifie que la pierre n'est pas entièrement capturée
+        visited[column][line] = true;
+
+        // Si la pierre n'a pas de liberté, elle est capturée
+        if (getLiberties(column, line) != 0) {
+            return true;
+        }
+
+        // Si l'une des directions renvoie false, la pierre n'est pas entièrement capturée
         return isCapturedHelper(color, column - 1, line, visited) &&
                 isCapturedHelper(color, column + 1, line, visited) &&
                 isCapturedHelper(color, column, line - 1, visited) &&
@@ -242,11 +244,12 @@ public class Goban {
 
 
 
-    private boolean hasLiberty(int column, int line) {
-        if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
-            return false;
-        }
-        return boxIsEmpty(column, line);
+    private int getLiberties(int column, int line) {
+//        if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
+//            return false;
+//        }
+//        return boxIsEmpty(column, line);
+        return 0; // @FIXME A coder
     }
 
 }
