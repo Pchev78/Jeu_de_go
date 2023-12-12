@@ -1,0 +1,12 @@
+<component name="ProjectRunConfigurationManager">
+  <configuration default="false" name="in-sp2-ok" type="Application" factoryName="Application">
+    <output_file path="D:\Desktop\IUT\2A\Partie B\R3.04 Qualité dev\Jeu_de_go\out\is\is-out-sp2-ok.txt" is_save="true" />
+    <option name="MAIN_CLASS_NAME" value="ihm.Main" />
+    <module name="Jeu_de_go" />
+    <option name="REDIRECT_INPUT" value="true" />
+    <option name="INPUT_FILE" value="$PROJECT_DIR$/in/in-sp2-ok.txt" />
+    <method v="2">
+      <option name="Make" enabled="true" />
+    </method>
+  </configuration>
+</component>

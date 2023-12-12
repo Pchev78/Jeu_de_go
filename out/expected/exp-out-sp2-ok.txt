@@ -36,3 +36,5 @@
  2 X . X . . 2     WHITE (O) has captured 0 stones
  1 . X . . . 1     BLACK (X) has captured 1 stones
    A B C D E
+
+=

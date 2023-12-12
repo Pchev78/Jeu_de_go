@@ -14,7 +14,7 @@ public class Goban {
     private static final int NB_ARGUMENTS_PLAY = 2;
     private static final int INDEX_COLOR_PLAY = 1, INDEX_COORDINATES_PLAY = 2;
     private static final int INDEX_COLUMNS = 0, INDEX_LINES = 1;
-    private static final int INDEX_SHOW_CAPTURED = 10;
+    private static final int INDEX_SHOW_CAPTURED = 11;
     private static String headerLetters; // Ligne composée de NB_CASES lettres
     private Stone[][] board;
     private Player white, black;
@@ -25,14 +25,16 @@ public class Goban {
         clear_board();
     }
 
-    public Stone[][] getBoard() {
-        return board;
-    }
     private static String getHeader() {
         StringBuilder headerLetters= new StringBuilder();
         headerLetters.append("   ");
-        for (int i = INDEX_BEGINNING_ALPHABET; i < INDEX_BEGINNING_ALPHABET + NB_BOXES; i++)
-            headerLetters.append((char) i).append(' ');
+        boolean first = true;
+        for (int i = INDEX_BEGINNING_ALPHABET; i < INDEX_BEGINNING_ALPHABET + NB_BOXES; i++) {
+            if (!first)
+                headerLetters.append(' ');
+            headerLetters.append((char) i);
+            first = false;
+        }
         return headerLetters.toString();
     }
     public void boardsize(int nbBoxes) throws IllegalArgumentException{
@@ -41,9 +43,9 @@ public class Goban {
         else if (nbBoxes < MIN_BOXES)
             throw new IllegalArgumentException("Nombre de cases trop petit");
         else {
-            if (nbBoxes > INDEX_SHOW_CAPTURED) {
-                INDEX_SHOW_CAPTURED_WHITE -= NB_BOXES - nbBoxes;
-                INDEX_SHOW_CAPTURED_BLACK -= NB_BOXES - nbBoxes;
+            if (nbBoxes >= INDEX_SHOW_CAPTURED) {
+                INDEX_SHOW_CAPTURED_WHITE = nbBoxes - INDEX_SHOW_CAPTURED + 2;
+                INDEX_SHOW_CAPTURED_BLACK = nbBoxes - INDEX_SHOW_CAPTURED + 1;
             } else {
                 // On ne peut pas aller en dessous de ces valeurs !
                 INDEX_SHOW_CAPTURED_WHITE = 1;
