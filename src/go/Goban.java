@@ -3,6 +3,7 @@ package go;
 import go.players.Black;
 import go.players.White;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Goban {
@@ -23,6 +24,16 @@ public class Goban {
         black = new Black();
         headerLetters = getHeader();
         clear_board();
+    }
+
+    public Goban(int boardsize, String playArguments) {
+        super();
+        boardsize(boardsize);
+        ArrayList<String> arrayList = new ArrayList<>();
+        arrayList.add("PLAY");
+        // @FIXME La méthode ne marche pas : il faut appeler un par un la méthode play, et passer en arguments le joueur
+        arrayList.addAll(Arrays.asList(playArguments.split(" ")));
+        play(arrayList.toArray(new String[0]));
     }
 
     private static String getHeader() {
@@ -47,7 +58,6 @@ public class Goban {
                 INDEX_SHOW_CAPTURED_WHITE = nbBoxes - INDEX_SHOW_CAPTURED + 2;
                 INDEX_SHOW_CAPTURED_BLACK = nbBoxes - INDEX_SHOW_CAPTURED + 1;
             } else {
-                // On ne peut pas aller en dessous de ces valeurs !
                 INDEX_SHOW_CAPTURED_WHITE = 1;
                 INDEX_SHOW_CAPTURED_BLACK = 0;
             }
@@ -232,7 +242,7 @@ public class Goban {
         visited[column][line] = true;
 
         // Si la pierre n'a pas de liberté, elle est capturée
-        if (getLiberties(column, line) != 0) {
+        if (getNbLiberties(column, line) != 0) {
             return true;
         }
 
@@ -246,7 +256,7 @@ public class Goban {
 
 
 
-    private int getLiberties(int column, int line) {
+    public int getNbLiberties(int column, int line) {
 //        if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
 //            return false;
 //        }
@@ -254,4 +264,8 @@ public class Goban {
         return 0; // @FIXME A coder
     }
 
+
+    public String toString() {
+        return showboard();
+    }
 }
