@@ -161,7 +161,6 @@ public class Goban {
 
 
         // @TODO Vérifier si une pièce ne doit pas être prise
-        //isCaptured(player, columnIndex, lineIndex);
         return output;
     }
 
@@ -177,7 +176,7 @@ public class Goban {
     }
 
     private boolean boxIsEmpty(int column, int line) {
-        return getPiece(column, line) == Stone.UNDEFINED;
+        return board[column][line] == Stone.UNDEFINED;
     }
 
     public void addPiece (Player player, int column, int line) {
@@ -187,22 +186,6 @@ public class Goban {
         else if (player.getColor().equals("WHITE"))
             piece = Stone.WHITE;
         board[column][line] = piece;
-    }
-
-
-
-    public Stone getNeighbor(Stone color, int column, int line) {
-        return board[column][line];
-    }
-
-    private boolean hasEmptyNeighbor(int column, int line) {
-        return boxIsEmpty(column - 1, line) && boxIsEmpty(column, line - 1)
-                && boxIsEmpty(column + 1, line) && boxIsEmpty(column, line + 1);
-    }
-
-    public boolean checkNeighbor(Player player, int column, int line) {
-        Stone color = player.getColor().equals("BLACK") ? Stone.BLACK : Stone.WHITE;
-        return board[column][line] != color;
     }
 
     /**
@@ -220,48 +203,46 @@ public class Goban {
             return true;
         }
     }
-    public boolean isCaptured(Player player, int column, int line) {
-        Stone piece = Stone.UNDEFINED;
-        if (player.getColor().equals("BLACK"))
-            piece = Stone.BLACK;
-        else if (player.getColor().equals("WHITE"))
-            piece = Stone.WHITE;
-        boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Tableau pour suivre les pierres visitées
-        return isCapturedHelper(piece, column, line, visited);
+
+    private boolean isLiberty(int x, int y) {
+        return x >= 0 && x < NB_BOXES && y >= 0 && y < NB_BOXES && board[x][y] == Stone.UNDEFINED;
     }
 
-    private boolean isCapturedHelper(Stone color, int column, int line, boolean[][] visited) {
-        if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
-            return false; // En dehors des limites, donc pas capturé
-        }
-
-        if (visited[column][line] || board[column][line] != color) {
-            return false;
-        }
-
-        visited[column][line] = true;
-
-        // Si la pierre n'a pas de liberté, elle est capturée
-        if (getNbLiberties(column, line) != 0) {
-            return true;
-        }
-
-        // Si l'une des directions renvoie false, la pierre n'est pas entièrement capturée
-        return isCapturedHelper(color, column - 1, line, visited) &&
-                isCapturedHelper(color, column + 1, line, visited) &&
-                isCapturedHelper(color, column, line - 1, visited) &&
-                isCapturedHelper(color, column, line + 1, visited);
+    public boolean isCaptured(int x,int y){
+        assert (boxIsEmpty(x,y));
+        return getNbLiberties(x, y) == 0;
+    }
+    public int getNbLiberties(int x, int y) {
+        boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Pour garder une trace des pions déjà visités
+        return getNbLibertiesHelper(x, y, board[x][y], visited);
     }
 
+    private int getNbLibertiesHelper(int x, int y, Stone stone, boolean[][] visited) {
+        // Vérifiez si la position est hors du plateau
+        if (x < 0 || x >= NB_BOXES || y < 0 || y >= NB_BOXES) return 0;
 
+        // Si la case a déjà été visitée ou n'est pas de la même couleur, retournez 0
+        if (visited[x][y] || board[x][y] != stone) return 0;
 
+        // Marquez la case actuelle comme visitée
+        visited[x][y] = true;
 
-    public int getNbLiberties(int column, int line) {
-//        if (column < 0 || column >= NB_BOXES || line < 0 || line >= NB_BOXES) {
-//            return false;
-//        }
-//        return boxIsEmpty(column, line);
-        return 0; // @FIXME A coder
+        int liberties = 0;
+
+        // Vérifiez les cases adjacentes (haut, bas, gauche, droite)
+        // Si une case adjacente est vide (UNDEFINED), c'est une liberté
+        if (isLiberty(x - 1, y)) liberties++;
+        if (isLiberty(x + 1, y)) liberties++;
+        if (isLiberty(x, y - 1)) liberties++;
+        if (isLiberty(x, y + 1)) liberties++;
+
+        // Appel récursif pour les cases adjacentes de la même couleur
+        liberties += getNbLibertiesHelper(x - 1, y, stone, visited);
+        liberties += getNbLibertiesHelper(x + 1, y, stone, visited);
+        liberties += getNbLibertiesHelper(x, y - 1, stone, visited);
+        liberties += getNbLibertiesHelper(x, y + 1, stone, visited);
+
+        return liberties;
     }
 
 
