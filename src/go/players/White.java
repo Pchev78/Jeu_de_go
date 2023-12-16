@@ -1,8 +1,6 @@
 package go.players;
 
-import go.Goban;
 import go.Player;
-import go.Stone;
 
 public class White implements Player {
     boolean isTurn = true;
@@ -13,6 +11,10 @@ public class White implements Player {
 
     public int getNbCaptured() {
         return nbCaptured;
+    }
+
+    public void incrementNbCaptured() {
+        nbCaptured++;
     }
 
     public void setIsTurn(boolean pIsTurn) {

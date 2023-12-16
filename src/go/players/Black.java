@@ -10,7 +10,11 @@ public class Black implements Player {
     }
 
     public int getNbCaptured() {
-        return 0;
+        return nbCaptured;
+    }
+
+    public void incrementNbCaptured() {
+        nbCaptured++;
     }
 
     public void setIsTurn(boolean pIsTurn) {

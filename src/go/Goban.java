@@ -119,14 +119,6 @@ public class Goban {
         return players;
     }
 
-    public Stone getPiece(int column, int line) {
-        try {
-            return board[column][line];
-        } catch (Exception e) { // Si la case est en dehors des limites du tableau
-            return Stone.UNDEFINED;
-        }
-    }
-
     private boolean checkMessage(String color, char column, int line, Player player, Player player2) {
         try {
             if (player == null || column < (char) INDEX_BEGINNING_ALPHABET ||
@@ -161,22 +153,19 @@ public class Goban {
 
 
         // @TODO Vérifier si une pièce ne doit pas être prise
+        checkCaptured();
         return output;
     }
 
 
 
     public boolean isPlayable(String color, char column, int columnInt, int line, Player player, Player player2) {
-        return (checkMessage(color, column, line, player, player2) && boxIsEmpty(columnInt, line)
+        return (checkMessage(color, column, line, player, player2) && board[columnInt][line] == Stone.UNDEFINED
                 && !checkSuicide());
     }
 
     private boolean checkSuicide() { // @TODO (Sprint 3) Implémenter la méthode
         return false;
-    }
-
-    private boolean boxIsEmpty(int column, int line) {
-        return board[column][line] == Stone.UNDEFINED;
     }
 
     public void addPiece (Player player, int column, int line) {
@@ -204,47 +193,63 @@ public class Goban {
         }
     }
 
-    private boolean isLiberty(int x, int y) {
-        return x >= 0 && x < NB_BOXES && y >= 0 && y < NB_BOXES && board[x][y] == Stone.UNDEFINED;
+    private boolean isLiberty(int column, int line) {
+        return inBounds(column,line) && board[column][line] == Stone.UNDEFINED;
     }
 
-    public boolean isCaptured(int x,int y){
-        assert (boxIsEmpty(x,y));
-        return getNbLiberties(x, y) == 0;
-    }
-    public int getNbLiberties(int x, int y) {
+    public int getNbLiberties(int column, int line) {
         boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Pour garder une trace des pions déjà visités
-        return getNbLibertiesHelper(x, y, board[x][y], visited);
+        return getNbLibertiesHelper(column, line, board[column][line], visited);
     }
 
-    private int getNbLibertiesHelper(int x, int y, Stone stone, boolean[][] visited) {
-        // Vérifiez si la position est hors du plateau
-        if (x < 0 || x >= NB_BOXES || y < 0 || y >= NB_BOXES) return 0;
+    private int getNbLibertiesHelper(int column, int line, Stone stone, boolean[][] visited) {
+        if (!inBounds(column, line)) return 0;
 
-        // Si la case a déjà été visitée ou n'est pas de la même couleur, retournez 0
-        if (visited[x][y] || board[x][y] != stone) return 0;
-
-        // Marquez la case actuelle comme visitée
-        visited[x][y] = true;
+        // Si la case a déjà été visitée ou n'est pas de la même couleur, on retourne 0
+        if (visited[column][line] || board[column][line] != stone) return 0;
+        visited[column][line] = true;
 
         int liberties = 0;
-
-        // Vérifiez les cases adjacentes (haut, bas, gauche, droite)
-        // Si une case adjacente est vide (UNDEFINED), c'est une liberté
-        if (isLiberty(x - 1, y)) liberties++;
-        if (isLiberty(x + 1, y)) liberties++;
-        if (isLiberty(x, y - 1)) liberties++;
-        if (isLiberty(x, y + 1)) liberties++;
+        if (isLiberty(column - 1, line)) liberties++;
+        if (isLiberty(column + 1, line)) liberties++;
+        if (isLiberty(column, line - 1)) liberties++;
+        if (isLiberty(column, line + 1)) liberties++;
 
         // Appel récursif pour les cases adjacentes de la même couleur
-        liberties += getNbLibertiesHelper(x - 1, y, stone, visited);
-        liberties += getNbLibertiesHelper(x + 1, y, stone, visited);
-        liberties += getNbLibertiesHelper(x, y - 1, stone, visited);
-        liberties += getNbLibertiesHelper(x, y + 1, stone, visited);
+        liberties += getNbLibertiesHelper(column - 1, line, stone, visited);
+        liberties += getNbLibertiesHelper(column + 1, line, stone, visited);
+        liberties += getNbLibertiesHelper(column, line - 1, stone, visited);
+        liberties += getNbLibertiesHelper(column, line + 1, stone, visited);
 
+        if(liberties == 0)
+            removePiece(column, line);
         return liberties;
     }
 
+    private void removePiece(int column, int line) {
+        assert (inBounds(column, line));
+        getOpponentPlayer(board[column][line]).incrementNbCaptured();
+        board[column][line] = Stone.UNDEFINED;
+    }
+
+    private Player getOpponentPlayer(Stone stone) {
+        if (stone == Stone.WHITE)
+            return black;
+        else
+            return white;
+    }
+
+    private boolean inBounds(int column, int line) {
+        return column < NB_BOXES - 1 && line < NB_BOXES - 1 && column >= 0 && line >= 0;
+    }
+
+    private void checkCaptured() {
+        for (int column = 0; column < NB_BOXES; column++)
+            for (int line = 0; line < NB_BOXES; line++) {
+                if (board[column][line] != Stone.UNDEFINED)
+                    getNbLiberties(column, line);
+            }
+    }
 
     public String toString() {
         return showboard();
