@@ -5,6 +5,7 @@ import go.players.White;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class Goban {
     // Nombres par défaut, mais pourront évoluer si on appelle boardsize
@@ -144,28 +145,26 @@ public class Goban {
 
         int columnIndex = column - INDEX_BEGINNING_ALPHABET;
         int lineIndex = Integer.parseInt(String.valueOf(line)) - 1;
-        boolean playable = isPlayable(messageColor,column, columnIndex, lineIndex, player, player2);
-        String output = "";
-        if (playable)
+        String output = checkMove(messageColor,column, columnIndex, lineIndex, player, player2);
+        if (Objects.equals(output, "")) {
             addPiece(player, columnIndex, lineIndex);
-        else
-            output = "invalid color or coordinate";
-
-
-        // @TODO Vérifier si une pièce ne doit pas être prise
-        checkCaptured();
+            checkCaptured();
+        }
         return output;
     }
 
 
 
-    public boolean isPlayable(String color, char column, int columnInt, int line, Player player, Player player2) {
-        return (checkMessage(color, column, line, player, player2) && board[columnInt][line] == Stone.UNDEFINED
-                && !checkSuicide());
+    public String checkMove(String color, char column, int columnInt, int line, Player player, Player player2) {
+        if (!checkMessage(color, column, line, player, player2))
+            return "invalid color or coordinate";
+        else if (!(board[columnInt][line] == Stone.UNDEFINED) || isSuicide(columnInt, line))
+            return "illegal move";
+        return "";
     }
 
-    private boolean checkSuicide() { // @TODO (Sprint 3) Implémenter la méthode
-        return false;
+    private boolean isSuicide(int column, int line) {
+        return getNbLiberties(column, line) == 0;
     }
 
     public void addPiece (Player player, int column, int line) {
@@ -244,6 +243,7 @@ public class Goban {
     }
 
     private void checkCaptured() {
+        //@FIXME Améliorer la complexité
         for (int column = 0; column < NB_BOXES; column++)
             for (int line = 0; line < NB_BOXES; line++) {
                 if (board[column][line] != Stone.UNDEFINED)
