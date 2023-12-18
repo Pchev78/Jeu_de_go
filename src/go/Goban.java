@@ -158,21 +158,33 @@ public class Goban {
     public String checkMove(String color, char column, int columnInt, int line, Player player, Player player2) {
         if (!checkMessage(color, column, line, player, player2))
             return "invalid color or coordinate";
-        else if (!(board[columnInt][line] == Stone.UNDEFINED) || isSuicide(columnInt, line))
+        else if (!(board[columnInt][line] == Stone.UNDEFINED) || isSuicide(columnInt, line, getStoneByPlayer(player)))
             return "illegal move";
         return "";
     }
 
-    private boolean isSuicide(int column, int line) {
-        return getNbLiberties(column, line) == 0;
+    private boolean isSuicide(int column, int line, Stone color) {
+        return getNbLiberties(column, line, color) == 0;
+    }
+
+    public Stone getStoneByPlayer(Player player) {
+        if (player.getColor().equals("BLACK"))
+            return Stone.BLACK;
+        else if (player.getColor().equals("WHITE"))
+            return Stone.WHITE;
+        return Stone.UNDEFINED;
+    }
+
+    public Stone getEnnemyStone(Stone color) {
+        if (color == Stone.BLACK)
+            return Stone.WHITE;
+        else if (color == Stone.WHITE)
+            return Stone.BLACK;
+        return Stone.UNDEFINED;
     }
 
     public void addPiece (Player player, int column, int line) {
-        Stone piece = Stone.UNDEFINED;
-        if (player.getColor().equals("BLACK"))
-            piece = Stone.BLACK;
-        else if (player.getColor().equals("WHITE"))
-            piece = Stone.WHITE;
+        Stone piece = getStoneByPlayer(player);
         board[column][line] = piece;
     }
 
@@ -196,16 +208,21 @@ public class Goban {
         return inBounds(column,line) && board[column][line] == Stone.UNDEFINED;
     }
 
-    public int getNbLiberties(int column, int line) {
-        boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Pour garder une trace des pions déjà visités
+    public int getNbLiberties(int column, int line, boolean[][] visited) {
+//        boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Pour garder une trace des pions déjà visités
         return getNbLibertiesHelper(column, line, board[column][line], visited);
+    }
+
+    public int getNbLiberties(int column, int line, Stone color) {
+        boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Pour garder une trace des pions déjà visités
+        return getNbLibertiesHelper(column, line, color, visited);
     }
 
     private int getNbLibertiesHelper(int column, int line, Stone stone, boolean[][] visited) {
         if (!inBounds(column, line)) return 0;
 
         // Si la case a déjà été visitée ou n'est pas de la même couleur, on retourne 0
-        if (visited[column][line] || board[column][line] != stone) return 0;
+        if (visited[column][line] || board[column][line] == getEnnemyStone(stone)) return 0;
         visited[column][line] = true;
 
         int liberties = 0;
@@ -227,7 +244,8 @@ public class Goban {
 
     private void removePiece(int column, int line) {
         assert (inBounds(column, line));
-        getOpponentPlayer(board[column][line]).incrementNbCaptured();
+        if (board[column][line] != Stone.UNDEFINED)
+            getOpponentPlayer(board[column][line]).incrementNbCaptured();
         board[column][line] = Stone.UNDEFINED;
     }
 
@@ -239,15 +257,16 @@ public class Goban {
     }
 
     private boolean inBounds(int column, int line) {
-        return column < NB_BOXES - 1 && line < NB_BOXES - 1 && column >= 0 && line >= 0;
+        return column < NB_BOXES && line < NB_BOXES && column >= 0 && line >= 0;
     }
 
     private void checkCaptured() {
         //@FIXME Améliorer la complexité
+        boolean[][] visited = new boolean[NB_BOXES][NB_BOXES];
         for (int column = 0; column < NB_BOXES; column++)
             for (int line = 0; line < NB_BOXES; line++) {
                 if (board[column][line] != Stone.UNDEFINED)
-                    getNbLiberties(column, line);
+                    getNbLiberties(column, line, visited);
             }
     }
 
