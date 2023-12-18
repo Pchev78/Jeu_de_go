@@ -13,6 +13,10 @@ public class Black implements Player {
         return nbCaptured;
     }
 
+    public void resetNbCaptured() {
+        nbCaptured = 0;
+    }
+
     public void incrementNbCaptured() {
         nbCaptured++;
     }

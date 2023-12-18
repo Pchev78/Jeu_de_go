@@ -70,9 +70,10 @@ public class Goban {
 
     public void clear_board() {
         board = new Stone[NB_BOXES][NB_BOXES];
-        for (Stone[] ligne : board) {
+        for (Stone[] ligne : board)
             Arrays.fill(ligne, Stone.UNDEFINED);
-        }
+        white.resetNbCaptured();
+        black.resetNbCaptured();
     }
 
     public String showboard() {
