@@ -11,7 +11,7 @@ public class Goban {
     // Nombres par défaut, mais pourront évoluer si on appelle boardsize
     private static int NB_BOXES = 19, INDEX_SHOW_CAPTURED_WHITE = 10, INDEX_SHOW_CAPTURED_BLACK = 9;
     private static final int FIRST_LINE = 1;
-    private static final int MIN_BOXES = 2, MAX_BOXES = 26;
+    private static final int MIN_BOXES = 2, MAX_BOXES = 25;
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
     private static final int NB_ARGUMENTS_PLAY = 2;
     private static final int INDEX_COLOR_PLAY = 1, INDEX_COORDINATES_PLAY = 2;
@@ -49,11 +49,11 @@ public class Goban {
         }
         return headerLetters.toString();
     }
-    public void boardsize(int nbBoxes) throws IllegalArgumentException{
+    public void boardsize(int nbBoxes) {
         if (nbBoxes > MAX_BOXES)
-            throw new IllegalArgumentException("Nombre de cases trop grand");
+            throw new NumberFormatException("Nombre de cases trop grand");
         else if (nbBoxes < MIN_BOXES)
-            throw new IllegalArgumentException("Nombre de cases trop petit");
+            throw new NumberFormatException("Nombre de cases trop petit");
         else {
             if (nbBoxes >= INDEX_SHOW_CAPTURED) {
                 INDEX_SHOW_CAPTURED_WHITE = nbBoxes - INDEX_SHOW_CAPTURED + 2;
@@ -121,13 +121,13 @@ public class Goban {
         return players;
     }
 
-    private boolean checkMessage(String color, char column, int line, Player player, Player player2) {
+    private boolean checkMessage(char column, int line, Player player, Player player2) {
         try {
             if (player == null || column < (char) INDEX_BEGINNING_ALPHABET ||
                     column > (char) (INDEX_BEGINNING_ALPHABET + NB_BOXES) || line < FIRST_LINE - 1 || line > NB_BOXES)
                 throw new IndexOutOfBoundsException("invalid color or coordinate");
 //            if (!changeTurn(player, player2)) // FIXME Pas nécessaire tant qu'il n'y pas D'IA ?
-//                throw new IllegalArgumentException("Ce n'est pas votre tour, soyez patient.");
+//                throw new IndexOutOfBoundsException("Ce n'est pas votre tour, soyez patient.");
             return true;
         } catch (Exception e) {
             return false;
@@ -146,8 +146,8 @@ public class Goban {
 
         int columnIndex = column - INDEX_BEGINNING_ALPHABET;
         int lineIndex = Integer.parseInt(String.valueOf(line)) - 1;
-        String output = checkMove(messageColor,column, columnIndex, lineIndex, player, player2);
-        if (Objects.equals(output, "")) {
+        String output = checkMove(column, columnIndex, lineIndex, player, player2);
+        if (Objects.equals(output, "")) { // S'il n'y a pas eu d'erreur
             addPiece(player, columnIndex, lineIndex);
             checkCaptured();
         }
@@ -156,8 +156,8 @@ public class Goban {
 
 
 
-    public String checkMove(String color, char column, int columnInt, int line, Player player, Player player2) {
-        if (!checkMessage(color, column, line, player, player2))
+    public String checkMove(char column, int columnInt, int line, Player player, Player player2) {
+        if (!checkMessage(column, line, player, player2))
             return "invalid color or coordinate";
         else if (!(board[columnInt][line] == Stone.UNDEFINED) || isSuicide(columnInt, line, getStoneByPlayer(player)))
             return "illegal move";

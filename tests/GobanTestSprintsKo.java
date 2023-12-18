@@ -8,15 +8,27 @@ public class GobanTestSprintsKo {
 
     @Test
     void boardsize() {
-//        assertEquals(NumberFormatException, goban.boardsize(1));
-//        assertEquals(NumberFormatException, goban.boardsize(26));
-//        assertEquals(NumberFormatException, goban.boardsize());
-//        assertEquals(IllegalArgumentException, goban.boardsize("e"));
+        assertThrows(NumberFormatException.class, () -> goban.boardsize(1));
+        assertThrows(NumberFormatException.class, () -> goban.boardsize(26));
     }
-	
-	@Test
-	void play() {
-		// assertEquals();
-		
-	}
+
+    @Test
+    public void placePiece() {
+        assertEquals("invalid color or coordinate", goban.play(new String[] {"PLAY","BLACK","Z2"}));
+        assertEquals("invalid color or coordinate", goban.play(new String[] {"PLAY","BLACK","A26"}));
+        assertEquals("invalid color or coordinate", goban.play(new String[] {"PLAY","GREY","A6"}));
+        goban.play(new String[] {"PLAY","WHITE","A2"});
+        assertEquals("illegal move", goban.play(new String[] {"PLAY","BLACK","A2"}));
+        assertEquals("illegal move", goban.play(new String[] {"PLAY","WHITE","A2"}));
+    }
+
+    @Test
+    public void isSuicide() {
+        goban.boardsize(5);
+        goban.play(new String[] {"PLAY","WHITE","A2"});
+        goban.play(new String[] {"PLAY","WHITE","C2"});
+        goban.play(new String[] {"PLAY","WHITE","B1"});
+        goban.play(new String[] {"PLAY","WHITE","B3"});
+        assertEquals("illegal move",goban.play(new String[] {"PLAY","BLACK","B2"}));
+    }
 }
