@@ -1,4 +1,5 @@
 import go.Goban;
+import go.Stone;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -193,7 +194,7 @@ public class GobanTestSprintsOk {
                 " 1 . X X . 1     BLACK (X) has captured 2 stones\n" +
                 "   A B C D\n", goban.showboard());
     }
-    /*
+
     @Test
     public void playWithChainsBS5() {
         goban.boardsize(5);
@@ -237,6 +238,16 @@ public class GobanTestSprintsOk {
                 """, goban.showboard());
 
         goban.play(new String[]{"PLAY","WHITE", "B3"});
+        assertEquals("""
+                   A B C D E
+                 5 . . . . . 5
+                 4 . O . . . 4
+                 3 O O O . . 3
+                 2 X O . . . 2     WHITE (O) has captured 1 stones
+                 1 . X O . . 1     BLACK (X) has captured 1 stones
+                   A B C D E
+                """, goban.showboard());
+
         goban.play(new String[]{"PLAY","BLACK", "C2"});
         assertEquals("""
                    A B C D E
@@ -258,9 +269,10 @@ public class GobanTestSprintsOk {
                  1 . X O . . 1     BLACK (X) has captured 1 stones
                    A B C D E
                 """, goban.showboard());
+
     }
-    */
-    /*
+
+
     @Test
     public void getNbLibertiesWithoutChains() {
         goban.boardsize(5);
@@ -271,7 +283,7 @@ public class GobanTestSprintsOk {
         goban.play(new String[]{"PLAY","BLACK", "B2"});
         assertEquals(1,goban.getNbLiberties(0,0, Stone.WHITE));
     }
-     */
+
 
     /*
     @Test

@@ -141,6 +141,7 @@ public class Goban {
         Player player = players[0], player2 = players[1];
 
         String coordinates = message[INDEX_LINES];
+        //@TODO Changer les coordonnées par un record
         char[] line = getCoordinates(coordinates);
         char column = coordinates.charAt(INDEX_COLUMNS);
 
@@ -153,8 +154,6 @@ public class Goban {
         }
         return output;
     }
-
-
 
     public String checkMove(char column, int columnInt, int line, Player player, Player player2) {
         if (!checkMessage(column, line, player, player2))
@@ -210,7 +209,6 @@ public class Goban {
     }
 
     public int getNbLiberties(int column, int line, boolean[][] visited) {
-//        boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Pour garder une trace des pions déjà visités
         return getNbLibertiesHelper(column, line, board[column][line], visited);
     }
 
@@ -233,10 +231,14 @@ public class Goban {
         if (isLiberty(column, line + 1)) liberties++;
 
         // Appel récursif pour les cases adjacentes de la même couleur
-        liberties += getNbLibertiesHelper(column - 1, line, stone, visited);
-        liberties += getNbLibertiesHelper(column + 1, line, stone, visited);
-        liberties += getNbLibertiesHelper(column, line - 1, stone, visited);
-        liberties += getNbLibertiesHelper(column, line + 1, stone, visited);
+        if (inBounds(column - 1, line) && board[column - 1][line] == stone)
+            liberties += getNbLibertiesHelper(column - 1, line, stone, visited);
+        if (inBounds(column + 1, line) && board[column + 1][line] == stone)
+            liberties += getNbLibertiesHelper(column + 1, line, stone, visited);
+        if (inBounds(column, line - 1) && board[column][line - 1] == stone)
+            liberties += getNbLibertiesHelper(column, line - 1, stone, visited);
+        if (inBounds(column, line + 1) && board[column][line + 1] == stone)
+            liberties += getNbLibertiesHelper(column, line + 1, stone, visited);
 
         if(liberties == 0)
             removePiece(column, line);
@@ -263,6 +265,7 @@ public class Goban {
 
     private void checkCaptured() {
         //@FIXME Améliorer la complexité
+        // @TODO Faire un Set
         boolean[][] visited = new boolean[NB_BOXES][NB_BOXES];
         for (int column = 0; column < NB_BOXES; column++)
             for (int line = 0; line < NB_BOXES; line++) {
