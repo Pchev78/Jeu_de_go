@@ -74,7 +74,9 @@ public class Main {
                 System.out.println(displayOutput(""));
                 System.out.println(goban.showboard());
             } else if (arguments[0].equals("PLAY")) {
-                System.out.println(displayOutput(goban.play(arguments)) + '\n');
+                String[] playArguments = new String[arguments.length - 1];
+                System.arraycopy(arguments, 1, playArguments, 0, playArguments.length);
+                System.out.println(displayOutput(goban.play(playArguments)) + '\n');
             } else
                 System.out.println(displayOutput("unknown command") + '\n');
         } while (true);

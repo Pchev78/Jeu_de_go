@@ -14,7 +14,7 @@ public class Goban {
     private static final int MIN_BOXES = 2, MAX_BOXES = 25;
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
     private static final int NB_ARGUMENTS_PLAY = 2;
-    private static final int INDEX_COLOR_PLAY = 1, INDEX_COORDINATES_PLAY = 2;
+    private static final int INDEX_COLOR_PLAY = 0, INDEX_COORDINATES_PLAY = 1;
     private static final int INDEX_COLUMNS = 0, INDEX_LINES = 1;
     private static final int INDEX_SHOW_CAPTURED = 11;
     private static String headerLetters; // Ligne composée de NB_CASES lettres
@@ -26,7 +26,7 @@ public class Goban {
         headerLetters = getHeader();
         clear_board();
     }
-
+/*
     public Goban(int boardsize, String playArguments) {
         super();
         boardsize(boardsize);
@@ -35,6 +35,15 @@ public class Goban {
         // @FIXME La méthode ne marche pas : il faut appeler un par un la méthode play, et passer en arguments le joueur
         arrayList.addAll(Arrays.asList(playArguments.split(" ")));
         play(arrayList.toArray(new String[0]));
+    }
+ */
+
+    public Goban(int size, String string) {
+        boardsize(size);
+        String[] moves = string.split(" ");
+        for (String move : moves) {
+            playSGF(move);
+        }
     }
 
     private static String getHeader() {
@@ -103,8 +112,8 @@ public class Goban {
 
     private String[] getMessage(String[] arguments) {
         String[] message = new String[NB_ARGUMENTS_PLAY];
-        message[INDEX_COLOR_PLAY - 1] = arguments[INDEX_COLOR_PLAY];
-        message[INDEX_COORDINATES_PLAY - 1] = arguments[INDEX_COORDINATES_PLAY];
+        message[INDEX_COLOR_PLAY] = arguments[INDEX_COLOR_PLAY];
+        message[INDEX_COORDINATES_PLAY] = arguments[INDEX_COORDINATES_PLAY];
         return message;
     }
 
@@ -136,7 +145,7 @@ public class Goban {
 
     public String play(String[] arguments) {
         String[] message = getMessage(arguments);
-        String messageColor = message[INDEX_COLOR_PLAY - 1];
+        String messageColor = message[INDEX_COLOR_PLAY];
         Player[] players = getPlayers(messageColor);
         Player player = players[0], player2 = players[1];
 
@@ -153,6 +162,15 @@ public class Goban {
             checkCaptured();
         }
         return output;
+    }
+
+    public void playSGF (String move) {
+        if(move.length() == 2) {
+            int x = move.charAt(0);
+            int y = move.charAt(1);
+            play(new String[]{});
+        } else
+            throw new IllegalArgumentException("Illegal sgf move : " + move);
     }
 
     public String checkMove(char column, int columnInt, int line, Player player, Player player2) {

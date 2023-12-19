@@ -4,10 +4,15 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="318227c9-6a7f-4c60-8c55-a25c1ae14423" name="Changes" comment="">
+    <list default="true" id="318227c9-6a7f-4c60-8c55-a25c1ae14423" name="Changes" comment="Changement de la fonction getNbLiberties">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Jeu_de_go.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Jeu_de_go.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsKo.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsKo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsOk.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsOk.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/go/Goban.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Goban.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/go/players/White.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/players/White.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/ihm/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ihm/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/GobanTestSprintsKo.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/GobanTestSprintsKo.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/GobanTestSprintsOk.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/GobanTestSprintsOk.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -50,7 +55,11 @@
     "Application.Main.executor": "Run",
     "Application.in-sp2-ok.executor": "Run",
     "Downloaded.Files.Path.Enabled": "false",
+    "JUnit.GobanTestSprintsOk.play.executor": "Run",
+    "JUnit.GobanTestSprintsOk.playCaptureWithoutChains.executor": "Debug",
     "JUnit.TestSp1.executor": "Run",
+    "JUnit.TestSp1Ko.executor": "Run",
+    "JUnit.TestSp1Ok.executor": "Run",
     "Repository.Attach.Annotations": "false",
     "Repository.Attach.JavaDocs": "false",
     "Repository.Attach.Sources": "false",
@@ -68,7 +77,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="JUnit.TestSp1Ko">
     <configuration name="Main" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="ihm.Main" />
       <module name="Jeu_de_go" />
@@ -76,7 +85,17 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="TestSp1" type="JUnit" factoryName="JUnit">
+    <configuration name="TestSp1Ko" type="JUnit" factoryName="JUnit">
+      <module name="Jeu_de_go" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="MAIN_CLASS_NAME" value="GobanTestSprintsKo" />
+      <option name="METHOD_NAME" value="" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="TestSp1Ok" type="JUnit" factoryName="JUnit">
       <module name="Jeu_de_go" />
       <option name="PACKAGE_NAME" value="" />
       <option name="MAIN_CLASS_NAME" value="GobanTestSprintsOk" />
@@ -89,7 +108,8 @@
     <list>
       <item itemvalue="Application.Main" />
       <item itemvalue="Application.in-sp2-ok" />
-      <item itemvalue="JUnit.TestSp1" />
+      <item itemvalue="JUnit.TestSp1Ok" />
+      <item itemvalue="JUnit.TestSp1Ko" />
     </list>
   </component>
   <component name="SharedIndexes">
@@ -124,8 +144,26 @@
       <workItem from="1702495851346" duration="1255000" />
       <workItem from="1702577068164" duration="2034000" />
       <workItem from="1702630698160" duration="19000" />
-      <workItem from="1702739111051" duration="627000" />
+      <workItem from="1702739111051" duration="6521000" />
+      <workItem from="1702762537002" duration="38000" />
+      <workItem from="1702807928721" duration="6637000" />
+      <workItem from="1702844318383" duration="930000" />
+      <workItem from="1702889553266" duration="1492000" />
+      <workItem from="1702893208517" duration="768000" />
+      <workItem from="1702902141016" duration="1607000" />
+      <workItem from="1702919628445" duration="4520000" />
+      <workItem from="1702980684475" duration="4234000" />
+      <workItem from="1703001347769" duration="3860000" />
     </task>
+    <task id="LOCAL-00001" summary="Changement de la fonction getNbLiberties">
+      <option name="closed" value="true" />
+      <created>1703001488429</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1703001488429</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -141,5 +179,20 @@
         </entry>
       </map>
     </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <MESSAGE value="Changement de la fonction getNbLiberties" />
+    <option name="LAST_COMMIT_MESSAGE" value="Changement de la fonction getNbLiberties" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/tests/GobanTestSprintsOk.java</url>
+          <line>250</line>
+          <option name="timeStamp" value="3" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

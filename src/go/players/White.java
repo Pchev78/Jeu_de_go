@@ -3,7 +3,7 @@ package go.players;
 import go.Player;
 
 public class White implements Player {
-    boolean isTurn = true;
+    boolean isTurn = false;
     private int nbCaptured = 0;
     public String getColor() {
         return "WHITE";
