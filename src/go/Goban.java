@@ -130,10 +130,10 @@ public class Goban {
         return players;
     }
 
-    private boolean checkMessage(char column, int line, Player player, Player player2) {
+    private boolean checkMessage(int column, int line, Player player, Player player2) {
         try {
-            if (player == null || column < (char) INDEX_BEGINNING_ALPHABET ||
-                    column > (char) (INDEX_BEGINNING_ALPHABET + NB_BOXES) || line < FIRST_LINE - 1 || line > NB_BOXES)
+            if (player == null || column + 1 < 0 ||
+                    column + 1 > NB_BOXES || line < FIRST_LINE - 1 || line > NB_BOXES)
                 throw new IndexOutOfBoundsException("invalid color or coordinate");
 //            if (!changeTurn(player, player2)) // FIXME Pas nécessaire tant qu'il n'y pas D'IA ?
 //                throw new IndexOutOfBoundsException("Ce n'est pas votre tour, soyez patient.");
@@ -149,16 +149,17 @@ public class Goban {
         Player[] players = getPlayers(messageColor);
         Player player = players[0], player2 = players[1];
 
-        String coordinates = message[INDEX_LINES];
+        String coordinatesArgs = message[INDEX_LINES];
         //@TODO Changer les coordonnées par un record
-        char[] line = getCoordinates(coordinates);
-        char column = coordinates.charAt(INDEX_COLUMNS);
+        char[] line = getCoordinates(coordinatesArgs);
+        char column = coordinatesArgs.charAt(INDEX_COLUMNS);
 
         int columnIndex = column - INDEX_BEGINNING_ALPHABET;
         int lineIndex = Integer.parseInt(String.valueOf(line)) - 1;
-        String output = checkMove(column, columnIndex, lineIndex, player, player2);
+        Coordinates coordinates = new Coordinates(columnIndex, lineIndex);
+        String output = checkMove(coordinates.column(), coordinates.line(), player, player2);
         if (Objects.equals(output, "")) { // S'il n'y a pas eu d'erreur
-            addPiece(player, columnIndex, lineIndex);
+            addPiece(player, coordinates.column(), coordinates.line());
             checkCaptured();
         }
         return output;
@@ -173,8 +174,8 @@ public class Goban {
             throw new IllegalArgumentException("Illegal sgf move : " + move);
     }
 
-    public String checkMove(char column, int columnInt, int line, Player player, Player player2) {
-        if (!checkMessage(column, line, player, player2))
+    public String checkMove(int columnInt, int line, Player player, Player player2) {
+        if (!checkMessage(columnInt, line, player, player2))
             return "invalid color or coordinate";
         else if (!(board[columnInt][line] == Stone.UNDEFINED) || isSuicide(columnInt, line, getStoneByPlayer(player)))
             return "illegal move";
@@ -225,6 +226,9 @@ public class Goban {
     private boolean isLiberty(int column, int line) {
         return inBounds(column,line) && board[column][line] == Stone.UNDEFINED;
     }
+
+    // @TODO Implémenter cette méthode
+    // int getLiberties(int x, int y, Set<Coord> ignore)
 
     public int getNbLiberties(int column, int line, boolean[][] visited) {
         return getNbLibertiesHelper(column, line, board[column][line], visited);
