@@ -3,9 +3,7 @@ package go;
 import go.players.Black;
 import go.players.White;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Objects;
+import java.util.*;
 
 public class Goban {
     // Nombres par défaut, mais pourront évoluer si on appelle boardsize
@@ -229,21 +227,21 @@ public class Goban {
     // @TODO Implémenter cette méthode
     // int getLiberties(int x, int y, Set<Coord> ignore)
 
-    public int getNbLiberties(int column, int line, boolean[][] visited) {
-        return getNbLibertiesHelper(column, line, board[column][line], visited);
+    public int getNbLiberties(int column, int line, Set<Coordinates> ignore) {
+        return getNbLibertiesHelper(column, line, board[column][line], ignore);
     }
 
     public int getNbLiberties(int column, int line, Stone color) {
-        boolean[][] visited = new boolean[NB_BOXES][NB_BOXES]; // Pour garder une trace des pions déjà visités
-        return getNbLibertiesHelper(column, line, color, visited);
+        Set<Coordinates> ignore = new HashSet<>(); // Pour garder une trace des pions déjà visités
+        return getNbLibertiesHelper(column, line, color, ignore);
     }
 
-    private int getNbLibertiesHelper(int column, int line, Stone stone, boolean[][] visited) {
+    private int getNbLibertiesHelper(int column, int line, Stone stone, Set<Coordinates> visited) {
         if (!inBounds(column, line)) return 0;
 
-        // Si la case a déjà été visitée ou n'est pas de la même couleur, on retourne 0
-        if (visited[column][line] || board[column][line] == getEnnemyStone(stone)) return 0;
-        visited[column][line] = true;
+        Coordinates currentCoord = new Coordinates(column, line);
+        if (visited.contains(currentCoord) || board[column][line] == getEnnemyStone(stone)) return 0;
+        visited.add(currentCoord);
 
         int liberties = 0;
         if (isLiberty(column - 1, line)) liberties++;
@@ -266,6 +264,7 @@ public class Goban {
         return liberties;
     }
 
+
     private void removePiece(int column, int line) {
         assert (inBounds(column, line));
         if (board[column][line] != Stone.UNDEFINED)
@@ -287,11 +286,11 @@ public class Goban {
     private void checkCaptured() {
         //@FIXME Améliorer la complexité
         // @TODO Faire un Set
-        boolean[][] visited = new boolean[NB_BOXES][NB_BOXES];
+        Set<Coordinates> ignore = new HashSet<>();
         for (int column = 0; column < NB_BOXES; column++)
             for (int line = 0; line < NB_BOXES; line++) {
                 if (board[column][line] != Stone.UNDEFINED)
-                    getNbLiberties(column, line, visited);
+                    getNbLiberties(column, line, ignore);
             }
     }
 
