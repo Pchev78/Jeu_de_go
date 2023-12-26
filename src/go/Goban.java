@@ -37,8 +37,11 @@ public class Goban {
  */
 
     public Goban(int size, String string) {
+        white = new White();
+        black = new Black();
         boardsize(size);
         String[] moves = string.split(" ");
+        black.setIsTurn(true);
         for (String move : moves) {
             playSGF(move);
         }
@@ -115,10 +118,12 @@ public class Goban {
         return message;
     }
 
-    public char[] getCoordinates(String coordinatesArg) {
-        char[] coordinates = new char[coordinatesArg.length() - 1];
-        coordinatesArg.getChars(1,coordinatesArg.length(),coordinates,0);
-        return coordinates;
+    public Coordinates getCoordinates(String coordinatesArg) {
+        char[] lineArg = new char[coordinatesArg.length() - 1];
+        coordinatesArg.getChars(1,coordinatesArg.length(),lineArg,0);
+        int column = coordinatesArg.charAt(INDEX_COLUMNS) - INDEX_BEGINNING_ALPHABET;
+        int line = Integer.parseInt(String.valueOf(lineArg)) - 1;
+        return new Coordinates(column, line);
     }
 
     public Player[] getPlayers(String color) {
@@ -141,19 +146,14 @@ public class Goban {
         }
     }
 
+    // @TODO Surcharger cette fonction
     public String play(String[] arguments) {
         String[] message = getMessage(arguments);
         String messageColor = message[INDEX_COLOR_PLAY];
         Player[] players = getPlayers(messageColor);
         Player player = players[0], player2 = players[1];
 
-        String coordinatesArgs = message[INDEX_LINES];
-        char[] lineArg = getCoordinates(coordinatesArgs);
-        char columnArg = coordinatesArgs.charAt(INDEX_COLUMNS);
-
-        int columnIndex = columnArg - INDEX_BEGINNING_ALPHABET;
-        int lineIndex = Integer.parseInt(String.valueOf(lineArg)) - 1;
-        Coordinates coordinates = new Coordinates(columnIndex, lineIndex);
+        Coordinates coordinates = getCoordinates(message[INDEX_COORDINATES_PLAY]);
         String output = checkMove(coordinates.column(), coordinates.line(), player, player2);
         if (Objects.equals(output, "")) { // S'il n'y a pas eu d'erreur
             addPiece(player, coordinates.column(), coordinates.line());
@@ -164,9 +164,12 @@ public class Goban {
 
     public void playSGF (String move) {
         if(move.length() == 2) {
-            int x = move.charAt(0);
-            int y = move.charAt(1);
-            play(new String[]{});
+            if (changeTurn(black, white))
+                play(new String[]{"BLACK",move.toUpperCase()});
+            else {
+                changeTurn(white, black);
+                play(new String[]{"WHITE",move.toUpperCase()});
+            }
         } else
             throw new IllegalArgumentException("Illegal sgf move : " + move);
     }

@@ -4,9 +4,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="318227c9-6a7f-4c60-8c55-a25c1ae14423" name="Changes" comment="Changement de la fonction getNbLiberties">
+    <list default="true" id="318227c9-6a7f-4c60-8c55-a25c1ae14423" name="Changes" comment="Implémentation du record Coordinates">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Jeu_de_go.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Jeu_de_go.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsKo.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsKo.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsOk.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsOk.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/go/Goban.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Goban.java" afterDir="false" />
@@ -75,7 +74,7 @@
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
-  <component name="RunManager" selected="JUnit.TestSp1Ko">
+  <component name="RunManager" selected="JUnit.TestSp1Ok">
     <configuration name="Main" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="ihm.Main" />
       <module name="Jeu_de_go" />
@@ -184,5 +183,16 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Changement de la fonction getNbLiberties" />
     <option name="LAST_COMMIT_MESSAGE" value="Changement de la fonction getNbLiberties" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/tests/GobanTestSprintsOk.java</url>
+          <line>93</line>
+          <option name="timeStamp" value="4" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>
