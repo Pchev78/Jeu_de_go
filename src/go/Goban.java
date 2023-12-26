@@ -150,12 +150,11 @@ public class Goban {
         Player player = players[0], player2 = players[1];
 
         String coordinatesArgs = message[INDEX_LINES];
-        //@TODO Changer les coordonnées par un record
-        char[] line = getCoordinates(coordinatesArgs);
-        char column = coordinatesArgs.charAt(INDEX_COLUMNS);
+        char[] lineArg = getCoordinates(coordinatesArgs);
+        char columnArg = coordinatesArgs.charAt(INDEX_COLUMNS);
 
-        int columnIndex = column - INDEX_BEGINNING_ALPHABET;
-        int lineIndex = Integer.parseInt(String.valueOf(line)) - 1;
+        int columnIndex = columnArg - INDEX_BEGINNING_ALPHABET;
+        int lineIndex = Integer.parseInt(String.valueOf(lineArg)) - 1;
         Coordinates coordinates = new Coordinates(columnIndex, lineIndex);
         String output = checkMove(coordinates.column(), coordinates.line(), player, player2);
         if (Objects.equals(output, "")) { // S'il n'y a pas eu d'erreur
@@ -174,10 +173,10 @@ public class Goban {
             throw new IllegalArgumentException("Illegal sgf move : " + move);
     }
 
-    public String checkMove(int columnInt, int line, Player player, Player player2) {
-        if (!checkMessage(columnInt, line, player, player2))
+    public String checkMove(int column, int line, Player player, Player player2) {
+        if (!checkMessage(column, line, player, player2))
             return "invalid color or coordinate";
-        else if (!(board[columnInt][line] == Stone.UNDEFINED) || isSuicide(columnInt, line, getStoneByPlayer(player)))
+        else if (!(board[column][line] == Stone.UNDEFINED) || isSuicide(column, line, getStoneByPlayer(player)))
             return "illegal move";
         return "";
     }
