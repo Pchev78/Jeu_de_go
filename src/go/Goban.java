@@ -122,7 +122,11 @@ public class Goban {
         char[] lineArg = new char[coordinatesArg.length() - 1];
         coordinatesArg.getChars(1,coordinatesArg.length(),lineArg,0);
         int column = coordinatesArg.charAt(INDEX_COLUMNS) - INDEX_BEGINNING_ALPHABET;
-        int line = Integer.parseInt(String.valueOf(lineArg)) - 1;
+        int line;
+        if (Character.isDigit(coordinatesArg.charAt(INDEX_LINES)))
+            line = Integer.parseInt(String.valueOf(lineArg)) - 1;
+        else
+            line = coordinatesArg.charAt(INDEX_LINES) - INDEX_BEGINNING_ALPHABET;
         return new Coordinates(column, line);
     }
 
@@ -146,7 +150,7 @@ public class Goban {
         }
     }
 
-    // @TODO Surcharger cette fonction
+    // @TODO Changer la fonction pour pouvoir utiliser changeTurn (notamment pour le 2ème constructeur)
     public String play(String[] arguments) {
         String[] message = getMessage(arguments);
         String messageColor = message[INDEX_COLOR_PLAY];
@@ -227,16 +231,17 @@ public class Goban {
         return inBounds(column,line) && board[column][line] == Stone.UNDEFINED;
     }
 
-    // @TODO Implémenter cette méthode
-    // int getLiberties(int x, int y, Set<Coord> ignore)
-
-    public int getNbLiberties(int column, int line, Set<Coordinates> ignore) {
-        return getNbLibertiesHelper(column, line, board[column][line], ignore);
+    public int getNbLiberties(int column, int line) {
+        return getNbLiberties(column, line, board[column][line]);
     }
 
     public int getNbLiberties(int column, int line, Stone color) {
         Set<Coordinates> ignore = new HashSet<>(); // Pour garder une trace des pions déjà visités
         return getNbLibertiesHelper(column, line, color, ignore);
+    }
+
+    public int getNbLiberties(int column, int line, Set<Coordinates> ignore) {
+        return getNbLibertiesHelper(column, line, board[column][line], ignore);
     }
 
     private int getNbLibertiesHelper(int column, int line, Stone stone, Set<Coordinates> visited) {
@@ -288,7 +293,6 @@ public class Goban {
 
     private void checkCaptured() {
         //@FIXME Améliorer la complexité
-        // @TODO Faire un Set
         Set<Coordinates> ignore = new HashSet<>();
         for (int column = 0; column < NB_BOXES; column++)
             for (int line = 0; line < NB_BOXES; line++) {
