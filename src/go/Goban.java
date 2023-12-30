@@ -7,7 +7,6 @@ import java.util.*;
 public class Goban {
     // Nombres par défaut, mais pourront évoluer si on appelle boardsize
     private static int NB_BOXES = 19, INDEX_SHOW_CAPTURED_WHITE = 10, INDEX_SHOW_CAPTURED_BLACK = 9;
-    private static final int FIRST_LINE = 1;
     private static final int MIN_BOXES = 2, MAX_BOXES = 25;
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
     private static final int NB_ARGUMENTS_PLAY = 2;
@@ -139,7 +138,7 @@ public class Goban {
     private boolean checkMessage(int column, int line, IPlayer player, IPlayer player2) {
         try {
             if (player == null || column + 1 < 0 ||
-                    column + 1 > NB_BOXES || line < FIRST_LINE - 1 || line > NB_BOXES)
+                    column + 1 > NB_BOXES || line < 0 || line > NB_BOXES)
                 throw new IndexOutOfBoundsException("invalid color or coordinate");
 //            if (!changeTurn(player, player2)) // FIXME Pas nécessaire tant qu'il n'y pas D'IA ?
 //                throw new IndexOutOfBoundsException("Ce n'est pas votre tour, soyez patient.");
@@ -301,5 +300,20 @@ public class Goban {
 
     public String toString() {
         return showboard();
+    }
+
+    public HashMap<Integer, ArrayList<Integer>> getEmptyBoxes() {
+        // @TODO Remplacer par HashMultiMap pour une meilleure lisibilité
+        HashMap<Integer, ArrayList<Integer>> emptyBoxes = new HashMap<>();
+        for (int column = 0; column < NB_BOXES; column++) {
+            ArrayList<Integer> lineList = new ArrayList<>();
+            for (int line = 0; line < NB_BOXES; line++) {
+                if (board[column][line] == Stone.UNDEFINED)
+                    lineList.add(line);
+            }
+            if (!lineList.isEmpty())
+                emptyBoxes.put(column, lineList);
+        }
+        return emptyBoxes;
     }
 }
