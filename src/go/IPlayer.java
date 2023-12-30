@@ -1,11 +1,10 @@
 package go;
 
-public interface Player {
+public interface IPlayer {
     String getColor();
-    int getNbCaptured();
     void resetNbCaptured();
     void incrementNbCaptured();
-    void setIsTurn(boolean pIsTurn);
+    void setIsTurn(boolean isTurn);
     boolean getIsTurn();
     String stringifyNbCaptured();
 }

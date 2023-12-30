@@ -1,7 +1,6 @@
 package go;
 
-import go.players.Black;
-import go.players.White;
+import go.players.ConsolePlayer;
 
 import java.util.*;
 
@@ -17,10 +16,10 @@ public class Goban {
     private static final int INDEX_SHOW_CAPTURED = 11;
     private static String headerLetters; // Ligne composée de NB_CASES lettres
     private Stone[][] board;
-    private Player white, black;
+    private IPlayer white, black;
     public Goban() {
-        white = new White();
-        black = new Black();
+        white = new ConsolePlayer(Stone.WHITE, false);
+        black = new ConsolePlayer(Stone.BLACK, true);
         headerLetters = getHeader();
         clear_board();
     }
@@ -37,8 +36,8 @@ public class Goban {
  */
 
     public Goban(int size, String string) {
-        white = new White();
-        black = new Black();
+        white = new ConsolePlayer(Stone.WHITE,false);
+        black = new ConsolePlayer(Stone.BLACK,false);
         boardsize(size);
         String[] moves = string.split(" ");
         black.setIsTurn(true);
@@ -130,14 +129,14 @@ public class Goban {
         return new Coordinates(column, line);
     }
 
-    public Player[] getPlayers(String color) {
-        Player[] players = new Player[2];
+    public IPlayer[] getPlayers(String color) {
+        IPlayer[] players = new IPlayer[2];
         players[0] = color.equals("BLACK") ? black : color.equals("WHITE") ? white : null;
         players[1] = color.equals("BLACK") ? white : color.equals("WHITE") ? black : null;
         return players;
     }
 
-    private boolean checkMessage(int column, int line, Player player, Player player2) {
+    private boolean checkMessage(int column, int line, IPlayer player, IPlayer player2) {
         try {
             if (player == null || column + 1 < 0 ||
                     column + 1 > NB_BOXES || line < FIRST_LINE - 1 || line > NB_BOXES)
@@ -150,12 +149,11 @@ public class Goban {
         }
     }
 
-    // @TODO Changer la fonction pour pouvoir utiliser changeTurn (notamment pour le 2ème constructeur)
     public String play(String[] arguments) {
         String[] message = getMessage(arguments);
         String messageColor = message[INDEX_COLOR_PLAY];
-        Player[] players = getPlayers(messageColor);
-        Player player = players[0], player2 = players[1];
+        IPlayer[] players = getPlayers(messageColor);
+        IPlayer player = players[0], player2 = players[1];
 
         Coordinates coordinates = getCoordinates(message[INDEX_COORDINATES_PLAY]);
         String output = checkMove(coordinates.column(), coordinates.line(), player, player2);
@@ -178,7 +176,7 @@ public class Goban {
             throw new IllegalArgumentException("Illegal sgf move : " + move);
     }
 
-    public String checkMove(int column, int line, Player player, Player player2) {
+    public String checkMove(int column, int line, IPlayer player, IPlayer player2) {
         if (!checkMessage(column, line, player, player2))
             return "invalid color or coordinate";
         else if (!(board[column][line] == Stone.UNDEFINED) || isSuicide(column, line, getStoneByPlayer(player)))
@@ -190,7 +188,7 @@ public class Goban {
         return getNbLiberties(column, line, color) == 0;
     }
 
-    public Stone getStoneByPlayer(Player player) {
+    public Stone getStoneByPlayer(IPlayer player) {
         if (player.getColor().equals("BLACK"))
             return Stone.BLACK;
         else if (player.getColor().equals("WHITE"))
@@ -206,7 +204,7 @@ public class Goban {
         return Stone.UNDEFINED;
     }
 
-    public void addPiece (Player player, int column, int line) {
+    public void addPiece (IPlayer player, int column, int line) {
         Stone piece = getStoneByPlayer(player);
         board[column][line] = piece;
     }
@@ -217,7 +215,7 @@ public class Goban {
      * @param player2 : joueur qui va jouer au tour suivant
      * @return true si c'est le tour de player, false sinon
      */
-    public boolean changeTurn(Player player, Player player2) {
+    public boolean changeTurn(IPlayer player, IPlayer player2) {
         if (!player.getIsTurn())
             return false;
         else {
@@ -280,7 +278,7 @@ public class Goban {
         board[column][line] = Stone.UNDEFINED;
     }
 
-    private Player getOpponentPlayer(Stone stone) {
+    private IPlayer getOpponentPlayer(Stone stone) {
         if (stone == Stone.WHITE)
             return black;
         else
