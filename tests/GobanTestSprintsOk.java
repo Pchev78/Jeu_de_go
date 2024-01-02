@@ -301,4 +301,11 @@ public class GobanTestSprintsOk {
         System.out.println(g);
     }
 
+    @Test
+    public void player() {
+        goban.player(new String[]{"BLACK", "CONSOLE"});
+        goban.player(new String[]{"WHITE", "RANDOM"});
+    }
+
+
 }
