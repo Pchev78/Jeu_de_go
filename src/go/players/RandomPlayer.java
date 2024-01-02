@@ -1,6 +1,6 @@
 package go.players;
 
-import go.Goban;
+import go.Coordinates;
 import go.IPlayer;
 import go.Stone;
 
@@ -58,8 +58,7 @@ public class RandomPlayer implements IPlayer {
             return "WHITE (O) has captured " + nbCaptured + " stones";
     }
 
-    public int[] playRandomly(Goban goban) throws Exception {
-        HashMap<Integer, ArrayList<Integer>> emptyBoxes = goban.getEmptyBoxes();
+    public Coordinates play(HashMap<Integer, ArrayList<Integer>> emptyBoxes) throws Exception {
         if (emptyBoxes.isEmpty())
             throw new Exception("Board is full. End of game.");
         else {
@@ -68,7 +67,8 @@ public class RandomPlayer implements IPlayer {
             int randomLine = (int) emptyBoxes.keySet().toArray()[randomIndex];
             ArrayList<Integer> possibleLines = emptyBoxes.get(randomLine);
             int randomCol = possibleLines.get(random.nextInt(possibleLines.size()));
-            return new int[]{randomLine, randomCol};
+            isTurn = false;
+            return new Coordinates(randomLine, randomCol);
         }
     }
 }

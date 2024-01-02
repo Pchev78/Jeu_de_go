@@ -67,8 +67,8 @@ public class Goban {
 
     public void clear_board() {
         board = new Stone[NB_BOXES][NB_BOXES];
-        for (Stone[] ligne : board)
-            Arrays.fill(ligne, Stone.UNDEFINED);
+        for (Stone[] line : board)
+            Arrays.fill(line, Stone.UNDEFINED);
         if (white != null)
             white.resetNbCaptured();
         if (black != null)
@@ -307,22 +307,22 @@ public class Goban {
             }
     }
 
-    public String toString() {
-        return showboard();
-    }
-
     public HashMap<Integer, ArrayList<Integer>> getEmptyBoxes() {
-        // @TODO Remplacer par HashMultiMap pour une meilleure lisibilité
         HashMap<Integer, ArrayList<Integer>> emptyBoxes = new HashMap<>();
         for (int column = 0; column < NB_BOXES; column++) {
             ArrayList<Integer> lineList = new ArrayList<>();
             for (int line = 0; line < NB_BOXES; line++) {
-                if (board[column][line] == Stone.UNDEFINED)
+                if (board[column][line] == Stone.UNDEFINED) {
                     lineList.add(line);
+                }
             }
             if (!lineList.isEmpty())
                 emptyBoxes.put(column, lineList);
         }
         return emptyBoxes;
+    }
+
+    public String toString() {
+        return showboard();
     }
 }
