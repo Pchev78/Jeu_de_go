@@ -1,6 +1,7 @@
 package go;
 
 import go.players.ConsolePlayer;
+import go.players.RandomPlayer;
 
 import java.util.*;
 
@@ -11,28 +12,16 @@ public class Goban {
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
     private static final int NB_ARGUMENTS_PLAY = 2;
     private static final int INDEX_COLOR_PLAY = 0, INDEX_COORDINATES_PLAY = 1;
+    private static final int INDEX_COLOR_PLAYER = 0, INDEX_PLAYER_TYPE = 1;
     private static final int INDEX_COLUMNS = 0, INDEX_LINES = 1;
     private static final int INDEX_SHOW_CAPTURED = 11;
     private static String headerLetters; // Ligne composée de NB_CASES lettres
     private Stone[][] board;
     private IPlayer white, black;
     public Goban() {
-        white = new ConsolePlayer(Stone.WHITE, false);
-        black = new ConsolePlayer(Stone.BLACK, true);
         headerLetters = getHeader();
         clear_board();
     }
-/*
-    public Goban(int boardsize, String playArguments) {
-        super();
-        boardsize(boardsize);
-        ArrayList<String> arrayList = new ArrayList<>();
-        arrayList.add("PLAY");
-        // @FIXME La méthode ne marche pas : il faut appeler un par un la méthode play, et passer en arguments le joueur
-        arrayList.addAll(Arrays.asList(playArguments.split(" ")));
-        play(arrayList.toArray(new String[0]));
-    }
- */
 
     public Goban(int size, String string) {
         white = new ConsolePlayer(Stone.WHITE,false);
@@ -80,8 +69,10 @@ public class Goban {
         board = new Stone[NB_BOXES][NB_BOXES];
         for (Stone[] ligne : board)
             Arrays.fill(ligne, Stone.UNDEFINED);
-        white.resetNbCaptured();
-        black.resetNbCaptured();
+        if (white != null)
+            white.resetNbCaptured();
+        if (black != null)
+            black.resetNbCaptured();
     }
 
     public String showboard() {
@@ -133,6 +124,24 @@ public class Goban {
         players[0] = color.equals("BLACK") ? black : color.equals("WHITE") ? white : null;
         players[1] = color.equals("BLACK") ? white : color.equals("WHITE") ? black : null;
         return players;
+    }
+
+    public void player(String[] parameters) throws IllegalArgumentException {
+        if (Objects.equals(parameters[INDEX_COLOR_PLAYER],"WHITE") && white == null)
+            white = definePlayer(Stone.WHITE, parameters[INDEX_PLAYER_TYPE]);
+        else if (Objects.equals(parameters[INDEX_COLOR_PLAYER],"BLACK") && black == null)
+            black = definePlayer(Stone.BLACK, parameters[INDEX_PLAYER_TYPE]);
+        else
+            throw new IllegalArgumentException("you didn't define correctly your player's color");
+    }
+
+    private IPlayer definePlayer(Stone color, String playerType) {
+        boolean isTurn = (color == Stone.BLACK); // Les noirs jouent en premier
+        if (Objects.equals(playerType, "CONSOLE"))
+            return new ConsolePlayer(color, isTurn);
+        if (Objects.equals(playerType,"RANDOM"))
+            return new RandomPlayer(color, isTurn);
+        throw new IllegalArgumentException("you didn't define correctly your player's color");
     }
 
     private boolean checkMessage(int column, int line, IPlayer player, IPlayer player2) {

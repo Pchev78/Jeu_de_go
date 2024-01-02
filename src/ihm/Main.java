@@ -73,6 +73,11 @@ public class Main {
             } else if (command.equals("SHOWBOARD")) {
                 System.out.println(displayOutput(""));
                 System.out.println(goban.showboard());
+            } else if (arguments[0].equals("PLAYER")) {
+                String[] playerArguments = new String[arguments.length - 1];
+                System.arraycopy(arguments, 1, playerArguments, 0, playerArguments.length);
+                System.out.println(displayOutput("") + '\n');
+                goban.player(playerArguments);
             } else if (arguments[0].equals("PLAY")) {
                 String[] playArguments = new String[arguments.length - 1];
                 System.arraycopy(arguments, 1, playArguments, 0, playArguments.length);
