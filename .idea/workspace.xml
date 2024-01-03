@@ -5,15 +5,16 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="318227c9-6a7f-4c60-8c55-a25c1ae14423" name="Changes" comment="Implémentation du record Coordinates">
+      <change afterPath="$PROJECT_DIR$/src/go/Piece.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Jeu_de_go.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Jeu_de_go.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go/Coordinates.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Coordinates.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsKo.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsKo.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsOk.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsOk.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/go/Goban.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Goban.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go/IPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/IPlayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go/Stone.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Stone.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/go/Stone.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Color.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/go/players/ConsolePlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/players/ConsolePlayer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/go/players/RandomPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/players/RandomPlayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/ihm/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/ihm/Main.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/GobanTestSprintsOk.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/GobanTestSprintsOk.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -53,7 +54,7 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
-    "Application.Main.executor": "Debug",
+    "Application.Main.executor": "Run",
     "Application.in-sp2-ok.executor": "Run",
     "Downloaded.Files.Path.Enabled": "false",
     "JUnit.GobanTestSprintsOk.play.executor": "Run",
@@ -83,7 +84,7 @@
     "vue.rearranger.settings.migration": "true"
   }
 }]]></component>
-  <component name="RunManager" selected="Application.Main">
+  <component name="RunManager" selected="JUnit.TestSp1Ok">
     <configuration name="Main" type="Application" factoryName="Application">
       <option name="MAIN_CLASS_NAME" value="ihm.Main" />
       <module name="Jeu_de_go" />
@@ -171,7 +172,12 @@
       <workItem from="1703931970395" duration="8697000" />
       <workItem from="1703955431831" duration="3471000" />
       <workItem from="1704049963950" duration="4882000" />
-      <workItem from="1704191029900" duration="1882000" />
+      <workItem from="1704191029900" duration="3296000" />
+      <workItem from="1704194545592" duration="34000" />
+      <workItem from="1704202439889" duration="242000" />
+      <workItem from="1704205536953" duration="4226000" />
+      <workItem from="1704219024658" duration="6739000" />
+      <workItem from="1704278954174" duration="1277000" />
     </task>
     <task id="LOCAL-00001" summary="Changement de la fonction getNbLiberties">
       <option name="closed" value="true" />
@@ -201,20 +207,5 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Changement de la fonction getNbLiberties" />
     <option name="LAST_COMMIT_MESSAGE" value="Changement de la fonction getNbLiberties" />
-  </component>
-  <component name="XDebuggerManager">
-    <breakpoint-manager>
-      <breakpoints>
-        <line-breakpoint enabled="true" type="java-method">
-          <url>file://$PROJECT_DIR$/src/go/Goban.java</url>
-          <line>130</line>
-          <properties class="go.Goban" method="player">
-            <option name="EMULATED" value="true" />
-            <option name="WATCH_EXIT" value="false" />
-          </properties>
-          <option name="timeStamp" value="1" />
-        </line-breakpoint>
-      </breakpoints>
-    </breakpoint-manager>
   </component>
 </project>

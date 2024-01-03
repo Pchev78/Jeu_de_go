@@ -1,16 +1,14 @@
 package go.players;
 
 import go.IPlayer;
-import go.Stone;
-
-import java.util.Objects;
+import go.Color;
 
 public class ConsolePlayer implements IPlayer {
     boolean isTurn;
     private int nbCaptured;
-    private final Stone color;
-    public ConsolePlayer(Stone color, boolean isTurn) {
-        assert(color != Stone.UNDEFINED);
+    private final Color color;
+    public ConsolePlayer(Color color, boolean isTurn) {
+        assert(color != Color.UNDEFINED);
         this.color = color;
         this.isTurn = isTurn;
         /*
@@ -22,7 +20,7 @@ public class ConsolePlayer implements IPlayer {
     }
     @Override
     public String getColor() {
-        return color == Stone.BLACK ? "BLACK" : "WHITE";
+        return color == Color.BLACK ? "BLACK" : "WHITE";
     }
 
     @Override
@@ -47,10 +45,8 @@ public class ConsolePlayer implements IPlayer {
 
     @Override
     public String stringifyNbCaptured() {
-        String color = getColor();
-        if (Objects.equals(color, "BLACK"))
+        if (color == Color.BLACK)
             return "BLACK (X) has captured " + nbCaptured + " stones";
-        else
-            return "WHITE (O) has captured " + nbCaptured + " stones";
+        return "WHITE (O) has captured " + nbCaptured + " stones";
     }
 }

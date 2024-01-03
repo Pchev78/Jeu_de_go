@@ -16,7 +16,7 @@ public class Goban {
     private static final int INDEX_COLUMNS = 0, INDEX_LINES = 1;
     private static final int INDEX_SHOW_CAPTURED = 11;
     private static String headerLetters; // Ligne composée de NB_CASES lettres
-    private Stone[][] board;
+    private Piece[][] board;
     private IPlayer white, black;
     public Goban() {
         headerLetters = getHeader();
@@ -24,8 +24,8 @@ public class Goban {
     }
 
     public Goban(int size, String string) {
-        white = new ConsolePlayer(Stone.WHITE,false);
-        black = new ConsolePlayer(Stone.BLACK,false);
+        white = new ConsolePlayer(Color.WHITE,false);
+        black = new ConsolePlayer(Color.BLACK,false);
         boardsize(size);
         String[] moves = string.split(" ");
         black.setIsTurn(true);
@@ -66,9 +66,12 @@ public class Goban {
     }
 
     public void clear_board() {
-        board = new Stone[NB_BOXES][NB_BOXES];
-        for (Stone[] line : board)
-            Arrays.fill(line, Stone.UNDEFINED);
+        board = new Piece[NB_BOXES][NB_BOXES];
+        for (int column = 0; column < NB_BOXES; column++) {
+            for (int line = 0; line < NB_BOXES; line++) {
+                board[column][line] = new Piece(new Coordinates(column, line), Color.UNDEFINED);
+            }
+        }
         if (white != null)
             white.resetNbCaptured();
         if (black != null)
@@ -85,7 +88,7 @@ public class Goban {
                 sb.append(' ');
             sb.append(i + 1);
             for (int j = 0; j < NB_BOXES; j++)
-                sb.append(' ').append(board[j][i]);
+                sb.append(' ').append(board[j][i].getColor());
 
             sb.append(' ').append(i + 1);
 
@@ -128,15 +131,15 @@ public class Goban {
 
     public void player(String[] parameters) throws IllegalArgumentException {
         if (Objects.equals(parameters[INDEX_COLOR_PLAYER],"WHITE") && white == null)
-            white = definePlayer(Stone.WHITE, parameters[INDEX_PLAYER_TYPE]);
+            white = definePlayer(Color.WHITE, parameters[INDEX_PLAYER_TYPE]);
         else if (Objects.equals(parameters[INDEX_COLOR_PLAYER],"BLACK") && black == null)
-            black = definePlayer(Stone.BLACK, parameters[INDEX_PLAYER_TYPE]);
+            black = definePlayer(Color.BLACK, parameters[INDEX_PLAYER_TYPE]);
         else
             throw new IllegalArgumentException("you didn't define correctly your player's color");
     }
 
-    private IPlayer definePlayer(Stone color, String playerType) {
-        boolean isTurn = (color == Stone.BLACK); // Les noirs jouent en premier
+    private IPlayer definePlayer(Color color, String playerType) {
+        boolean isTurn = (color == Color.BLACK); // Les noirs jouent en premier
         if (Objects.equals(playerType, "CONSOLE"))
             return new ConsolePlayer(color, isTurn);
         if (Objects.equals(playerType,"RANDOM"))
@@ -187,34 +190,35 @@ public class Goban {
     public String checkMove(int column, int line, IPlayer player, IPlayer player2) {
         if (!checkMessage(column, line, player, player2))
             return "invalid color or coordinate";
-        else if (!(board[column][line] == Stone.UNDEFINED) || isSuicide(column, line, getStoneByPlayer(player)))
+        else if (!(board[column][line].getColor() == Color.UNDEFINED) ||
+                isSuicide(column, line, new Piece(new Coordinates(column, line),getColorByPlayer(player))))
             return "illegal move";
         return "";
     }
 
-    private boolean isSuicide(int column, int line, Stone color) {
-        return getNbLiberties(column, line, color) == 0;
+    private boolean isSuicide(int column, int line, Piece piece) {
+        return getNbLiberties(column, line, piece.getColor()) == 0;
     }
 
-    public Stone getStoneByPlayer(IPlayer player) {
+    public Color getColorByPlayer(IPlayer player) {
         if (player.getColor().equals("BLACK"))
-            return Stone.BLACK;
+            return Color.BLACK;
         else if (player.getColor().equals("WHITE"))
-            return Stone.WHITE;
-        return Stone.UNDEFINED;
+            return Color.WHITE;
+        return Color.UNDEFINED;
     }
 
-    public Stone getEnnemyStone(Stone color) {
-        if (color == Stone.BLACK)
-            return Stone.WHITE;
-        else if (color == Stone.WHITE)
-            return Stone.BLACK;
-        return Stone.UNDEFINED;
+    public Color getEnemyColor(Color color) {
+        if (color == Color.BLACK)
+            return Color.WHITE;
+        else if (color == Color.WHITE)
+            return Color.BLACK;
+        return Color.UNDEFINED;
     }
 
     public void addPiece (IPlayer player, int column, int line) {
-        Stone piece = getStoneByPlayer(player);
-        board[column][line] = piece;
+        Color color = getColorByPlayer(player);
+        board[column][line] = new Piece(new Coordinates(column, line), color);
     }
 
     /**
@@ -234,27 +238,28 @@ public class Goban {
     }
 
     private boolean isLiberty(int column, int line) {
-        return inBounds(column,line) && board[column][line] == Stone.UNDEFINED;
+        return inBounds(column,line) && board[column][line].getColor() == Color.UNDEFINED;
     }
 
     public int getNbLiberties(int column, int line) {
-        return getNbLiberties(column, line, board[column][line]);
+        return getNbLiberties(column, line, board[column][line].getColor());
     }
 
-    public int getNbLiberties(int column, int line, Stone color) {
+    public int getNbLiberties(int column, int line, Color color) {
         Set<Coordinates> ignore = new HashSet<>(); // Pour garder une trace des pions déjà visités
         return getNbLibertiesHelper(column, line, color, ignore);
     }
 
     public int getNbLiberties(int column, int line, Set<Coordinates> ignore) {
-        return getNbLibertiesHelper(column, line, board[column][line], ignore);
+        return getNbLibertiesHelper(column, line, board[column][line].getColor(), ignore);
     }
 
-    private int getNbLibertiesHelper(int column, int line, Stone stone, Set<Coordinates> visited) {
+    private int getNbLibertiesHelper(int column, int line, Color color, Set<Coordinates> visited) {
         if (!inBounds(column, line)) return 0;
 
         Coordinates currentCoord = new Coordinates(column, line);
-        if (visited.contains(currentCoord) || board[column][line] == getEnnemyStone(stone)) return 0;
+        if (visited.contains(currentCoord) ||
+                board[column][line].getColor() == getEnemyColor(color)) return 0;
         visited.add(currentCoord);
 
         int liberties = 0;
@@ -264,14 +269,14 @@ public class Goban {
         if (isLiberty(column, line + 1)) liberties++;
 
         // Appel récursif pour les cases adjacentes de la même couleur
-        if (inBounds(column - 1, line) && board[column - 1][line] == stone)
-            liberties += getNbLibertiesHelper(column - 1, line, stone, visited);
-        if (inBounds(column + 1, line) && board[column + 1][line] == stone)
-            liberties += getNbLibertiesHelper(column + 1, line, stone, visited);
-        if (inBounds(column, line - 1) && board[column][line - 1] == stone)
-            liberties += getNbLibertiesHelper(column, line - 1, stone, visited);
-        if (inBounds(column, line + 1) && board[column][line + 1] == stone)
-            liberties += getNbLibertiesHelper(column, line + 1, stone, visited);
+        if (inBounds(column - 1, line) && board[column - 1][line].getColor() == color)
+            liberties += getNbLibertiesHelper(column - 1, line, color, visited);
+        if (inBounds(column + 1, line) && board[column + 1][line].getColor() == color)
+            liberties += getNbLibertiesHelper(column + 1, line, color, visited);
+        if (inBounds(column, line - 1) && board[column][line - 1].getColor() == color)
+            liberties += getNbLibertiesHelper(column, line - 1, color, visited);
+        if (inBounds(column, line + 1) && board[column][line + 1].getColor() == color)
+            liberties += getNbLibertiesHelper(column, line + 1, color, visited);
 
         if(liberties == 0)
             removePiece(column, line);
@@ -281,16 +286,13 @@ public class Goban {
 
     private void removePiece(int column, int line) {
         assert (inBounds(column, line));
-        if (board[column][line] != Stone.UNDEFINED)
+        if (board[column][line].getColor() != Color.UNDEFINED)
             getOpponentPlayer(board[column][line]).incrementNbCaptured();
-        board[column][line] = Stone.UNDEFINED;
+        board[column][line] = new Piece(new Coordinates(column, line),Color.UNDEFINED);
     }
 
-    private IPlayer getOpponentPlayer(Stone stone) {
-        if (stone == Stone.WHITE)
-            return black;
-        else
-            return white;
+    private IPlayer getOpponentPlayer(Piece stone) {
+        return stone.getColor() == Color.WHITE ? black : white;
     }
 
     private boolean inBounds(int column, int line) {
@@ -302,17 +304,17 @@ public class Goban {
         Set<Coordinates> ignore = new HashSet<>();
         for (int column = 0; column < NB_BOXES; column++)
             for (int line = 0; line < NB_BOXES; line++) {
-                if (board[column][line] != Stone.UNDEFINED)
+                if (board[column][line].getColor() != Color.UNDEFINED)
                     getNbLiberties(column, line, ignore);
             }
     }
 
-    public HashMap<Integer, ArrayList<Integer>> getEmptyBoxes() {
+    public HashMap<Integer, ArrayList<Integer>> getEmptyBoxes(Piece stone) {
         HashMap<Integer, ArrayList<Integer>> emptyBoxes = new HashMap<>();
         for (int column = 0; column < NB_BOXES; column++) {
             ArrayList<Integer> lineList = new ArrayList<>();
             for (int line = 0; line < NB_BOXES; line++) {
-                if (board[column][line] == Stone.UNDEFINED) {
+                if (board[column][line].getColor() == Color.UNDEFINED && !isSuicide(column, line, stone)) {
                     lineList.add(line);
                 }
             }

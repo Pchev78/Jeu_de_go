@@ -50,5 +50,14 @@
         <SOURCES />
       </library>
     </orderEntry>
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES />
+        <JAVADOC />
+        <SOURCES>
+          <root url="jar://$MODULE_DIR$/guava-master.zip!/guava-master/guava/src" />
+        </SOURCES>
+      </library>
+    </orderEntry>
   </component>
 </module>

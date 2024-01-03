@@ -1,6 +1,6 @@
 package go;
 
-public enum Stone {
+public enum Color {
     BLACK,
     WHITE,
     UNDEFINED;

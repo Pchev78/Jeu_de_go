@@ -2,19 +2,18 @@ package go.players;
 
 import go.Coordinates;
 import go.IPlayer;
-import go.Stone;
+import go.Color;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.Random;
 
 public class RandomPlayer implements IPlayer {
     boolean isTurn;
     private int nbCaptured;
-    private final Stone color;
-    public RandomPlayer(Stone color, boolean isTurn) {
-        assert(color != Stone.UNDEFINED);
+    private final Color color;
+    public RandomPlayer(Color color, boolean isTurn) {
+        assert(color != Color.UNDEFINED);
         this.color = color;
         this.isTurn = isTurn;
         /*
@@ -26,7 +25,7 @@ public class RandomPlayer implements IPlayer {
     }
     @Override
     public String getColor() {
-        return color == Stone.BLACK ? "BLACK" : "WHITE";
+        return color == Color.BLACK ? "BLACK" : "WHITE";
     }
 
     @Override
@@ -51,11 +50,9 @@ public class RandomPlayer implements IPlayer {
 
     @Override
     public String stringifyNbCaptured() {
-        String color = getColor();
-        if (Objects.equals(color, "BLACK"))
+        if (color == Color.BLACK)
             return "BLACK (X) has captured " + nbCaptured + " stones";
-        else
-            return "WHITE (O) has captured " + nbCaptured + " stones";
+        return "WHITE (O) has captured " + nbCaptured + " stones";
     }
 
     public Coordinates play(HashMap<Integer, ArrayList<Integer>> emptyBoxes) throws Exception {
