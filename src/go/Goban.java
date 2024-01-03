@@ -147,10 +147,10 @@ public class Goban {
         throw new IllegalArgumentException("you didn't define correctly your player's color");
     }
 
-    private boolean checkMessage(int column, int line, IPlayer player, IPlayer player2) {
+    private boolean checkMessage(Coordinates coordinates, IPlayer player, IPlayer player2) {
         try {
-            if (player == null || column + 1 < 0 ||
-                    column + 1 > NB_BOXES || line < 0 || line > NB_BOXES)
+            if (player == null || coordinates.column() + 1 < 0 ||
+                    coordinates.column() + 1 > NB_BOXES || coordinates.line() < 0 || coordinates.line() > NB_BOXES)
                 throw new IndexOutOfBoundsException("invalid color or coordinate");
 //            if (!changeTurn(player, player2)) // FIXME Pas nécessaire tant qu'il n'y pas D'IA ?
 //                throw new IndexOutOfBoundsException("Ce n'est pas votre tour, soyez patient.");
@@ -167,9 +167,9 @@ public class Goban {
         IPlayer player = players[0], player2 = players[1];
 
         Coordinates coordinates = getCoordinates(message[INDEX_COORDINATES_PLAY]);
-        String output = checkMove(coordinates.column(), coordinates.line(), player, player2);
+        String output = checkMove(coordinates, player, player2);
         if (Objects.equals(output, "")) { // S'il n'y a pas eu d'erreur
-            addPiece(player, coordinates.column(), coordinates.line());
+            addPiece(player, coordinates);
             checkCaptured();
         }
         return output;
@@ -187,17 +187,17 @@ public class Goban {
             throw new IllegalArgumentException("Illegal sgf move : " + move);
     }
 
-    public String checkMove(int column, int line, IPlayer player, IPlayer player2) {
-        if (!checkMessage(column, line, player, player2))
+    public String checkMove(Coordinates coordinates, IPlayer player, IPlayer player2) {
+        if (!checkMessage(coordinates, player, player2))
             return "invalid color or coordinate";
-        else if (!(board[column][line].getColor() == Color.UNDEFINED) ||
-                isSuicide(column, line, new Piece(new Coordinates(column, line),getColorByPlayer(player))))
+        else if (!(board[coordinates.column()][coordinates.line()].getColor() == Color.UNDEFINED) ||
+                isSuicide(coordinates, new Piece(coordinates,getColorByPlayer(player))))
             return "illegal move";
         return "";
     }
 
-    private boolean isSuicide(int column, int line, Piece piece) {
-        return getNbLiberties(column, line, piece.getColor()) == 0;
+    private boolean isSuicide(Coordinates coordinates, Piece piece) {
+        return getNbLiberties(coordinates, piece.getColor()) == 0;
     }
 
     public Color getColorByPlayer(IPlayer player) {
@@ -216,9 +216,9 @@ public class Goban {
         return Color.UNDEFINED;
     }
 
-    public void addPiece (IPlayer player, int column, int line) {
+    public void addPiece (IPlayer player, Coordinates coordinates) {
         Color color = getColorByPlayer(player);
-        board[column][line] = new Piece(new Coordinates(column, line), color);
+        board[coordinates.column()][coordinates.line()] = new Piece(coordinates, color);
     }
 
     /**
@@ -242,25 +242,25 @@ public class Goban {
     }
 
     public int getNbLiberties(int column, int line) {
-        return getNbLiberties(column, line, board[column][line].getColor());
+        return getNbLiberties(new Coordinates(column, line), board[column][line].getColor());
     }
 
-    public int getNbLiberties(int column, int line, Color color) {
+    public int getNbLiberties(Coordinates coordinates, Color color) {
         Set<Coordinates> ignore = new HashSet<>(); // Pour garder une trace des pions déjà visités
-        return getNbLibertiesHelper(column, line, color, ignore);
+        return getNbLibertiesHelper(coordinates, color, ignore);
     }
 
-    public int getNbLiberties(int column, int line, Set<Coordinates> ignore) {
-        return getNbLibertiesHelper(column, line, board[column][line].getColor(), ignore);
+    public int getNbLiberties(Coordinates coordinates, Set<Coordinates> ignore) {
+        return getNbLibertiesHelper(coordinates, board[coordinates.column()][coordinates.line()].getColor(), ignore);
     }
 
-    private int getNbLibertiesHelper(int column, int line, Color color, Set<Coordinates> visited) {
+    private int getNbLibertiesHelper(Coordinates coordinates, Color color, Set<Coordinates> visited) {
+        int column = coordinates.column(), line = coordinates.line();
         if (!inBounds(column, line)) return 0;
 
-        Coordinates currentCoord = new Coordinates(column, line);
-        if (visited.contains(currentCoord) ||
+        if (visited.contains(coordinates) ||
                 board[column][line].getColor() == getEnemyColor(color)) return 0;
-        visited.add(currentCoord);
+        visited.add(coordinates);
 
         int liberties = 0;
         if (isLiberty(column - 1, line)) liberties++;
@@ -270,25 +270,26 @@ public class Goban {
 
         // Appel récursif pour les cases adjacentes de la même couleur
         if (inBounds(column - 1, line) && board[column - 1][line].getColor() == color)
-            liberties += getNbLibertiesHelper(column - 1, line, color, visited);
+            liberties += getNbLibertiesHelper(new Coordinates(column - 1, line), color, visited);
         if (inBounds(column + 1, line) && board[column + 1][line].getColor() == color)
-            liberties += getNbLibertiesHelper(column + 1, line, color, visited);
+            liberties += getNbLibertiesHelper(new Coordinates(column + 1, line), color, visited);
         if (inBounds(column, line - 1) && board[column][line - 1].getColor() == color)
-            liberties += getNbLibertiesHelper(column, line - 1, color, visited);
+            liberties += getNbLibertiesHelper(new Coordinates(column, line - 1), color, visited);
         if (inBounds(column, line + 1) && board[column][line + 1].getColor() == color)
-            liberties += getNbLibertiesHelper(column, line + 1, color, visited);
+            liberties += getNbLibertiesHelper(new Coordinates(column, line + 1), color, visited);
 
         if(liberties == 0)
-            removePiece(column, line);
+            removePiece(coordinates);
         return liberties;
     }
 
 
-    private void removePiece(int column, int line) {
-        assert (inBounds(column, line));
+    private void removePiece(Coordinates coordinates) {
+        assert (inBounds(coordinates.column(), coordinates.line()));
+        int column = coordinates.column(), line = coordinates.line();
         if (board[column][line].getColor() != Color.UNDEFINED)
             getOpponentPlayer(board[column][line]).incrementNbCaptured();
-        board[column][line] = new Piece(new Coordinates(column, line),Color.UNDEFINED);
+        board[column][line] = new Piece(coordinates,Color.UNDEFINED);
     }
 
     private IPlayer getOpponentPlayer(Piece stone) {
@@ -305,7 +306,7 @@ public class Goban {
         for (int column = 0; column < NB_BOXES; column++)
             for (int line = 0; line < NB_BOXES; line++) {
                 if (board[column][line].getColor() != Color.UNDEFINED)
-                    getNbLiberties(column, line, ignore);
+                    getNbLiberties(new Coordinates(column, line), ignore);
             }
     }
 
@@ -314,7 +315,8 @@ public class Goban {
         for (int column = 0; column < NB_BOXES; column++) {
             ArrayList<Integer> lineList = new ArrayList<>();
             for (int line = 0; line < NB_BOXES; line++) {
-                if (board[column][line].getColor() == Color.UNDEFINED && !isSuicide(column, line, stone)) {
+                if (board[column][line].getColor() == Color.UNDEFINED &&
+                        !isSuicide(new Coordinates(column, line), stone)) {
                     lineList.add(line);
                 }
             }

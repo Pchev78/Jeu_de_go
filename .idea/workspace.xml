@@ -5,15 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="318227c9-6a7f-4c60-8c55-a25c1ae14423" name="Changes" comment="Implémentation du record Coordinates">
-      <change afterPath="$PROJECT_DIR$/src/go/Piece.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Jeu_de_go.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Jeu_de_go.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsKo.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsKo.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsOk.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsOk.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/go/Goban.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Goban.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go/Stone.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Color.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go/players/ConsolePlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/players/ConsolePlayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/go/players/RandomPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/players/RandomPlayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/tests/GobanTestSprintsKo.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/GobanTestSprintsKo.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/tests/GobanTestSprintsOk.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/GobanTestSprintsOk.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -177,7 +173,7 @@
       <workItem from="1704202439889" duration="242000" />
       <workItem from="1704205536953" duration="4226000" />
       <workItem from="1704219024658" duration="6739000" />
-      <workItem from="1704278954174" duration="1277000" />
+      <workItem from="1704278954174" duration="3563000" />
     </task>
     <task id="LOCAL-00001" summary="Changement de la fonction getNbLiberties">
       <option name="closed" value="true" />
