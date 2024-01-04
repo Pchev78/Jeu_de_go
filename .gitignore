@@ -1,6 +1,6 @@
 ### IntelliJ IDEA ###
 out/production/
-.idea/workspace.xml
+.idea/*
 !**/src/main/**/out/
 !**/src/test/**/out/
 

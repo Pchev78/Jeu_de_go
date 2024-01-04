@@ -67,9 +67,9 @@ public class Goban {
 
     public void clear_board() {
         board = new Piece[NB_BOXES][NB_BOXES];
-        for (int column = 0; column < NB_BOXES; column++) {
-            for (int line = 0; line < NB_BOXES; line++) {
-                board[column][line] = new Piece(new Coordinates(column, line), Color.UNDEFINED);
+        for (int row = 0; row < NB_BOXES; row++) {
+            for (int column = 0; column < NB_BOXES; column++) {
+                board[row][column] = new Piece(new Coordinates(row, column), Color.UNDEFINED);
             }
         }
         if (white != null)
@@ -113,13 +113,13 @@ public class Goban {
     public Coordinates getCoordinates(String coordinatesArg) {
         char[] lineArg = new char[coordinatesArg.length() - 1];
         coordinatesArg.getChars(1,coordinatesArg.length(),lineArg,0);
-        int column = coordinatesArg.charAt(INDEX_COLUMNS) - INDEX_BEGINNING_ALPHABET;
-        int line;
+        int row = coordinatesArg.charAt(INDEX_COLUMNS) - INDEX_BEGINNING_ALPHABET;
+        int column;
         if (Character.isDigit(coordinatesArg.charAt(INDEX_LINES)))
-            line = Integer.parseInt(String.valueOf(lineArg)) - 1;
+            column = Integer.parseInt(String.valueOf(lineArg)) - 1;
         else
-            line = coordinatesArg.charAt(INDEX_LINES) - INDEX_BEGINNING_ALPHABET;
-        return new Coordinates(column, line);
+            column = coordinatesArg.charAt(INDEX_LINES) - INDEX_BEGINNING_ALPHABET;
+        return new Coordinates(row, column);
     }
 
     public IPlayer[] getPlayers(String color) {
@@ -149,8 +149,8 @@ public class Goban {
 
     private boolean checkMessage(Coordinates coordinates, IPlayer player, IPlayer player2) {
         try {
-            if (player == null || coordinates.column() + 1 < 0 ||
-                    coordinates.column() + 1 > NB_BOXES || coordinates.line() < 0 || coordinates.line() > NB_BOXES)
+            if (player == null || coordinates.row() + 1 < 0 ||
+                    coordinates.row() + 1 > NB_BOXES || coordinates.column() < 0 || coordinates.column() > NB_BOXES)
                 throw new IndexOutOfBoundsException("invalid color or coordinate");
 //            if (!changeTurn(player, player2)) // FIXME Pas nécessaire tant qu'il n'y pas D'IA ?
 //                throw new IndexOutOfBoundsException("Ce n'est pas votre tour, soyez patient.");
@@ -190,7 +190,7 @@ public class Goban {
     public String checkMove(Coordinates coordinates, IPlayer player, IPlayer player2) {
         if (!checkMessage(coordinates, player, player2))
             return "invalid color or coordinate";
-        else if (!(board[coordinates.column()][coordinates.line()].getColor() == Color.UNDEFINED) ||
+        else if (!(board[coordinates.row()][coordinates.column()].getColor() == Color.UNDEFINED) ||
                 isSuicide(coordinates, new Piece(coordinates,getColorByPlayer(player))))
             return "illegal move";
         return "";
@@ -218,7 +218,7 @@ public class Goban {
 
     public void addPiece (IPlayer player, Coordinates coordinates) {
         Color color = getColorByPlayer(player);
-        board[coordinates.column()][coordinates.line()] = new Piece(coordinates, color);
+        board[coordinates.row()][coordinates.column()] = new Piece(coordinates, color);
     }
 
     /**
@@ -237,91 +237,91 @@ public class Goban {
         }
     }
 
-    private boolean isLiberty(int column, int line) {
-        return inBounds(column,line) && board[column][line].getColor() == Color.UNDEFINED;
+    private boolean isLiberty(int row, int column) {
+        return inBounds(row,column) && board[row][column].getColor() == Color.UNDEFINED;
     }
 
-    public int getNbLiberties(int column, int line) {
-        return getNbLiberties(new Coordinates(column, line), board[column][line].getColor());
+    public int getNbLiberties(int row, int column) {
+        return getNbLiberties(new Coordinates(row, column), board[row][column].getColor());
     }
 
     public int getNbLiberties(Coordinates coordinates, Color color) {
         Set<Coordinates> ignore = new HashSet<>(); // Pour garder une trace des pions déjà visités
-        return getNbLibertiesHelper(coordinates, color, ignore);
+        return getNbLibertiesHelper(coordinates, color, ignore, 0);
     }
 
     public int getNbLiberties(Coordinates coordinates, Set<Coordinates> ignore) {
-        return getNbLibertiesHelper(coordinates, board[coordinates.column()][coordinates.line()].getColor(), ignore);
+        return getNbLibertiesHelper(coordinates, board[coordinates.row()][coordinates.column()].getColor(), ignore, 0);
     }
 
-    private int getNbLibertiesHelper(Coordinates coordinates, Color color, Set<Coordinates> visited) {
-        int column = coordinates.column(), line = coordinates.line();
-        if (!inBounds(column, line)) return 0;
+    private int getNbLibertiesHelper(Coordinates coordinates, Color color, Set<Coordinates> visited, int liberties) {
+        int row = coordinates.row(), column = coordinates.column();
+        if (!inBounds(row, column)) return 0;
+
+        // Utiliser une variable locale pour stocker la couleur de la case courante
+        Color currentColor = board[row][column].getColor();
 
         if (visited.contains(coordinates) ||
-                board[column][line].getColor() == getEnemyColor(color)) return 0;
+                currentColor == getEnemyColor(color)) return 0;
         visited.add(coordinates);
 
-        int liberties = 0;
-        if (isLiberty(column - 1, line)) liberties++;
-        if (isLiberty(column + 1, line)) liberties++;
-        if (isLiberty(column, line - 1)) liberties++;
-        if (isLiberty(column, line + 1)) liberties++;
+        // Utiliser une boucle for pour parcourir les quatre directions
+        int[] dx = {-1, 1, 0, 0};
+        int[] dy = {0, 0, -1, 1};
+        for (int i = 0; i < 4; i++) {
+            int newRow = row + dx[i];
+            int newColumn = column + dy[i];
+            if (isLiberty(newRow, newColumn)) liberties++;
+            // Appel récursif pour les cases adjacentes de la même couleur
+            if (inBounds(newRow, newColumn) && board[newRow][newColumn].getColor() == color)
+                liberties += getNbLibertiesHelper(new Coordinates(newRow, newColumn), color, visited, liberties);
+        }
 
-        // Appel récursif pour les cases adjacentes de la même couleur
-        if (inBounds(column - 1, line) && board[column - 1][line].getColor() == color)
-            liberties += getNbLibertiesHelper(new Coordinates(column - 1, line), color, visited);
-        if (inBounds(column + 1, line) && board[column + 1][line].getColor() == color)
-            liberties += getNbLibertiesHelper(new Coordinates(column + 1, line), color, visited);
-        if (inBounds(column, line - 1) && board[column][line - 1].getColor() == color)
-            liberties += getNbLibertiesHelper(new Coordinates(column, line - 1), color, visited);
-        if (inBounds(column, line + 1) && board[column][line + 1].getColor() == color)
-            liberties += getNbLibertiesHelper(new Coordinates(column, line + 1), color, visited);
-
-        if(liberties == 0)
+        if (liberties == 0) {
             removePiece(coordinates);
+        }
         return liberties;
     }
 
 
     private void removePiece(Coordinates coordinates) {
-        assert (inBounds(coordinates.column(), coordinates.line()));
-        int column = coordinates.column(), line = coordinates.line();
-        if (board[column][line].getColor() != Color.UNDEFINED)
-            getOpponentPlayer(board[column][line]).incrementNbCaptured();
-        board[column][line] = new Piece(coordinates,Color.UNDEFINED);
+        assert (inBounds(coordinates.row(), coordinates.column()));
+        int row = coordinates.row(), column = coordinates.column();
+        if (board[row][column].getColor() != Color.UNDEFINED)
+            getOpponentPlayer(board[row][column]).incrementNbCaptured();
+        board[row][column] = new Piece(coordinates,Color.UNDEFINED);
     }
 
     private IPlayer getOpponentPlayer(Piece stone) {
         return stone.getColor() == Color.WHITE ? black : white;
     }
 
-    private boolean inBounds(int column, int line) {
-        return column < NB_BOXES && line < NB_BOXES && column >= 0 && line >= 0;
+    private boolean inBounds(int row, int column) {
+        return row < NB_BOXES && column < NB_BOXES && row >= 0 && column >= 0;
     }
 
     private void checkCaptured() {
         //@FIXME Améliorer la complexité
         Set<Coordinates> ignore = new HashSet<>();
-        for (int column = 0; column < NB_BOXES; column++)
-            for (int line = 0; line < NB_BOXES; line++) {
-                if (board[column][line].getColor() != Color.UNDEFINED)
-                    getNbLiberties(new Coordinates(column, line), ignore);
+        for (int row = 0; row < NB_BOXES; row++)
+            for (int column = 0; column < NB_BOXES; column++) {
+                if (board[row][column].getColor() != Color.UNDEFINED)
+                    getNbLiberties(new Coordinates(row, column), ignore);
             }
     }
 
     public HashMap<Integer, ArrayList<Integer>> getEmptyBoxes(Piece stone) {
         HashMap<Integer, ArrayList<Integer>> emptyBoxes = new HashMap<>();
-        for (int column = 0; column < NB_BOXES; column++) {
-            ArrayList<Integer> lineList = new ArrayList<>();
-            for (int line = 0; line < NB_BOXES; line++) {
-                if (board[column][line].getColor() == Color.UNDEFINED &&
-                        !isSuicide(new Coordinates(column, line), stone)) {
-                    lineList.add(line);
+        for (int row = 0; row < NB_BOXES; row++) {
+            ArrayList<Integer> columnsList = new ArrayList<>();
+            for (int column = 0; column < NB_BOXES; column++) {
+                if (board[row][column].getColor() == Color.UNDEFINED &&
+                        !isSuicide(new Coordinates(row, column), stone)) {
+                    columnsList.add(column);
                 }
             }
-            if (!lineList.isEmpty())
-                emptyBoxes.put(column, lineList);
+            if (!columnsList.isEmpty())
+                emptyBoxes.put(row, columnsList);
         }
         return emptyBoxes;
     }

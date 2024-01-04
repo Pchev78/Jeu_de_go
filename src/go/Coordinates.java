@@ -1,3 +1,3 @@
 package go;
 
-public record Coordinates(int column, int line) {}
+public record Coordinates(int row, int column) {}
