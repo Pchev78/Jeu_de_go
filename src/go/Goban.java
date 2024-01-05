@@ -10,7 +10,6 @@ public class Goban {
     private static int NB_BOXES = 19, INDEX_SHOW_CAPTURED_WHITE = 10, INDEX_SHOW_CAPTURED_BLACK = 9;
     private static final int MIN_BOXES = 2, MAX_BOXES = 25;
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
-    private static final int NB_ARGUMENTS_PLAY = 2;
     private static final int INDEX_COLOR_PLAY = 0, INDEX_COORDINATES_PLAY = 1;
     private static final int INDEX_COLOR_PLAYER = 0, INDEX_PLAYER_TYPE = 1;
     private static final int INDEX_COLUMNS = 0, INDEX_LINES = 1;
@@ -47,22 +46,23 @@ public class Goban {
         return headerLetters.toString();
     }
     public void boardsize(int nbBoxes) {
-        if (nbBoxes > MAX_BOXES)
+        if (nbBoxes > MAX_BOXES) {
             throw new NumberFormatException("Nombre de cases trop grand");
-        else if (nbBoxes < MIN_BOXES)
-            throw new NumberFormatException("Nombre de cases trop petit");
-        else {
-            if (nbBoxes >= INDEX_SHOW_CAPTURED) {
-                INDEX_SHOW_CAPTURED_WHITE = nbBoxes - INDEX_SHOW_CAPTURED + 2;
-                INDEX_SHOW_CAPTURED_BLACK = nbBoxes - INDEX_SHOW_CAPTURED + 1;
-            } else {
-                INDEX_SHOW_CAPTURED_WHITE = 1;
-                INDEX_SHOW_CAPTURED_BLACK = 0;
-            }
-            NB_BOXES = nbBoxes;
-            headerLetters = getHeader();
-            clear_board();
         }
+        if (nbBoxes < MIN_BOXES) {
+            throw new NumberFormatException("Nombre de cases trop petit");
+        }
+
+        if (nbBoxes >= INDEX_SHOW_CAPTURED) {
+            INDEX_SHOW_CAPTURED_WHITE = nbBoxes - INDEX_SHOW_CAPTURED + 2;
+            INDEX_SHOW_CAPTURED_BLACK = nbBoxes - INDEX_SHOW_CAPTURED + 1;
+        } else {
+            INDEX_SHOW_CAPTURED_WHITE = 1;
+            INDEX_SHOW_CAPTURED_BLACK = 0;
+        }
+        NB_BOXES = nbBoxes;
+        headerLetters = getHeader();
+        clear_board();
     }
 
     public void clear_board() {
@@ -102,15 +102,7 @@ public class Goban {
     }
 
 
-
-    private String[] getMessage(String[] arguments) {
-        String[] message = new String[NB_ARGUMENTS_PLAY];
-        message[INDEX_COLOR_PLAY] = arguments[INDEX_COLOR_PLAY];
-        message[INDEX_COORDINATES_PLAY] = arguments[INDEX_COORDINATES_PLAY];
-        return message;
-    }
-
-    public Coordinates getCoordinates(String coordinatesArg) {
+    private Coordinates getCoordinates(String coordinatesArg) {
         char[] lineArg = new char[coordinatesArg.length() - 1];
         coordinatesArg.getChars(1,coordinatesArg.length(),lineArg,0);
         int row = coordinatesArg.charAt(INDEX_COLUMNS) - INDEX_BEGINNING_ALPHABET;
@@ -122,7 +114,7 @@ public class Goban {
         return new Coordinates(row, column);
     }
 
-    public IPlayer[] getPlayers(String color) {
+    private IPlayer[] getPlayers(String color) {
         IPlayer[] players = new IPlayer[2];
         players[0] = color.equals("BLACK") ? black : color.equals("WHITE") ? white : null;
         players[1] = color.equals("BLACK") ? white : color.equals("WHITE") ? black : null;
@@ -161,46 +153,52 @@ public class Goban {
     }
 
     public String play(String[] arguments) {
-        String[] message = getMessage(arguments);
-        String messageColor = message[INDEX_COLOR_PLAY];
-        IPlayer[] players = getPlayers(messageColor);
-        IPlayer player = players[0], player2 = players[1];
+        try {
+            String color = arguments[INDEX_COLOR_PLAY];
+            String coordinatesText = arguments[INDEX_COORDINATES_PLAY];
+            IPlayer[] players = getPlayers(color);
+            IPlayer player = players[0], player2 = players[1];
 
-        Coordinates coordinates = getCoordinates(message[INDEX_COORDINATES_PLAY]);
-        String output = checkMove(coordinates, player, player2);
-        if (Objects.equals(output, "")) { // S'il n'y a pas eu d'erreur
+            Coordinates coordinates = getCoordinates(coordinatesText);
+            checkMove(coordinates, player, player2);
+
             addPiece(player, coordinates);
             checkCaptured();
+        } catch (IllegalArgumentException e) {
+            return e.getMessage();
         }
-        return output;
+
+        return "";
     }
 
     public void playSGF (String move) {
-        if(move.length() == 2) {
-            if (changeTurn(black, white))
-                play(new String[]{"BLACK",move.toUpperCase()});
-            else {
-                changeTurn(white, black);
-                play(new String[]{"WHITE",move.toUpperCase()});
-            }
-        } else
+        if(move.length() != 2) {
             throw new IllegalArgumentException("Illegal sgf move : " + move);
+        }
+
+        if (changeTurn(black, white))
+            play(new String[]{"BLACK",move.toUpperCase()});
+        else {
+            changeTurn(white, black);
+            play(new String[]{"WHITE",move.toUpperCase()});
+        }
     }
 
-    public String checkMove(Coordinates coordinates, IPlayer player, IPlayer player2) {
-        if (!checkMessage(coordinates, player, player2))
-            return "invalid color or coordinate";
-        else if (!(board[coordinates.row()][coordinates.column()].getColor() == Color.UNDEFINED) ||
-                isSuicide(coordinates, new Piece(coordinates,getColorByPlayer(player))))
-            return "illegal move";
-        return "";
+    private void checkMove(Coordinates coordinates, IPlayer player, IPlayer player2) {
+        if (!checkMessage(coordinates, player, player2)) {
+            throw new IllegalArgumentException("invalid color or coordinate");
+        }
+
+        if (!(board[coordinates.row()][coordinates.column()].getColor() == Color.UNDEFINED) || isSuicide(coordinates, new Piece(coordinates,getColorByPlayer(player)))) {
+            throw new IllegalArgumentException("illegal move");
+        }
     }
 
     private boolean isSuicide(Coordinates coordinates, Piece piece) {
         return getNbLiberties(coordinates, piece.getColor()) == 0;
     }
 
-    public Color getColorByPlayer(IPlayer player) {
+    private Color getColorByPlayer(IPlayer player) {
         if (player.getColor().equals("BLACK"))
             return Color.BLACK;
         else if (player.getColor().equals("WHITE"))
@@ -208,7 +206,7 @@ public class Goban {
         return Color.UNDEFINED;
     }
 
-    public Color getEnemyColor(Color color) {
+    private Color getEnemyColor(Color color) {
         if (color == Color.BLACK)
             return Color.WHITE;
         else if (color == Color.WHITE)
@@ -216,7 +214,7 @@ public class Goban {
         return Color.UNDEFINED;
     }
 
-    public void addPiece (IPlayer player, Coordinates coordinates) {
+    private void addPiece (IPlayer player, Coordinates coordinates) {
         Color color = getColorByPlayer(player);
         board[coordinates.row()][coordinates.column()] = new Piece(coordinates, color);
     }
@@ -227,7 +225,7 @@ public class Goban {
      * @param player2 : joueur qui va jouer au tour suivant
      * @return true si c'est le tour de player, false sinon
      */
-    public boolean changeTurn(IPlayer player, IPlayer player2) {
+    private boolean changeTurn(IPlayer player, IPlayer player2) {
         if (!player.getIsTurn())
             return false;
         else {
@@ -238,7 +236,7 @@ public class Goban {
     }
 
     private boolean isLiberty(int row, int column) {
-        return inBounds(row,column) && board[row][column].getColor() == Color.UNDEFINED;
+        return inBounds(row, column) && board[row][column].getColor() == Color.UNDEFINED;
     }
 
     public int getNbLiberties(int row, int column) {
@@ -250,28 +248,26 @@ public class Goban {
         return getNbLibertiesHelper(coordinates, color, ignore, 0);
     }
 
-    public int getNbLiberties(Coordinates coordinates, Set<Coordinates> ignore) {
+    private int getNbLiberties(Coordinates coordinates, Set<Coordinates> ignore) {
         return getNbLibertiesHelper(coordinates, board[coordinates.row()][coordinates.column()].getColor(), ignore, 0);
     }
 
     private int getNbLibertiesHelper(Coordinates coordinates, Color color, Set<Coordinates> visited, int liberties) {
         int row = coordinates.row(), column = coordinates.column();
-        if (!inBounds(row, column)) return 0;
+        if (!inBounds(row, column) || visited.contains(coordinates)) {
+            return 0;
+        }
 
-        // Utiliser une variable locale pour stocker la couleur de la case courante
-        Color currentColor = board[row][column].getColor();
-
-        if (visited.contains(coordinates) ||
-                currentColor == getEnemyColor(color)) return 0;
         visited.add(coordinates);
 
-        // Utiliser une boucle for pour parcourir les quatre directions
         int[] dx = {-1, 1, 0, 0};
         int[] dy = {0, 0, -1, 1};
         for (int i = 0; i < 4; i++) {
             int newRow = row + dx[i];
             int newColumn = column + dy[i];
-            if (isLiberty(newRow, newColumn)) liberties++;
+            if (isLiberty(newRow, newColumn)) {
+                liberties++;
+            }
             // Appel récursif pour les cases adjacentes de la même couleur
             if (inBounds(newRow, newColumn) && board[newRow][newColumn].getColor() == color)
                 liberties += getNbLibertiesHelper(new Coordinates(newRow, newColumn), color, visited, liberties);
