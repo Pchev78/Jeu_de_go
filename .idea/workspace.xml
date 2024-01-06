@@ -8,9 +8,9 @@
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsKo.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsKo.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsOk.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/test/Jeu_de_go/GobanTestSprintsOk.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/go/Coordinates.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Coordinates.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/go/Goban.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/Goban.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/GobanTestSprintsKo.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/GobanTestSprintsKo.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/GobanTestSprintsOk.java" beforeDir="false" afterPath="$PROJECT_DIR$/tests/GobanTestSprintsOk.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/go/players/RandomPlayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/go/players/RandomPlayer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -173,7 +173,14 @@
       <workItem from="1704202439889" duration="242000" />
       <workItem from="1704205536953" duration="4226000" />
       <workItem from="1704219024658" duration="6739000" />
-      <workItem from="1704278954174" duration="3563000" />
+      <workItem from="1704278954174" duration="3810000" />
+      <workItem from="1704282867961" duration="22000" />
+      <workItem from="1704362416378" duration="21004000" />
+      <workItem from="1704403225365" duration="7110000" />
+      <workItem from="1704451213218" duration="2629000" />
+      <workItem from="1704453944179" duration="122000" />
+      <workItem from="1704533558578" duration="9067000" />
+      <workItem from="1704572232994" duration="3922000" />
     </task>
     <task id="LOCAL-00001" summary="Changement de la fonction getNbLiberties">
       <option name="closed" value="true" />
@@ -203,5 +210,33 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="Changement de la fonction getNbLiberties" />
     <option name="LAST_COMMIT_MESSAGE" value="Changement de la fonction getNbLiberties" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/tests/GobanTestSprintsOk.java</url>
+          <line>323</line>
+          <option name="timeStamp" value="13" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/tests/GobanTestSprintsKo.java</url>
+          <line>58</line>
+          <properties>
+            <option name="lambda-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="20" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-method">
+          <url>file://$PROJECT_DIR$/src/go/Goban.java</url>
+          <line>179</line>
+          <properties class="go.Goban" method="playAI">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

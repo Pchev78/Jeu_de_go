@@ -21,7 +21,6 @@ public class RandomPlayer extends Player {
             int randomLine = (int) emptyBoxes.keySet().toArray()[randomIndex];
             ArrayList<Integer> possibleLines = emptyBoxes.get(randomLine);
             int randomCol = possibleLines.get(random.nextInt(possibleLines.size()));
-            isTurn = false;
             return new Coordinates(randomLine, randomCol);
         }
     }

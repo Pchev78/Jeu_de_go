@@ -12,7 +12,6 @@ public class Goban {
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
     private static final int INDEX_COLOR_PLAY = 0, INDEX_COORDINATES_PLAY = 1;
     private static final int INDEX_COLOR_PLAYER = 0, INDEX_PLAYER_TYPE = 1;
-    private static final int INDEX_COLUMNS = 0, INDEX_LINES = 1;
     private static final int INDEX_SHOW_CAPTURED = 11;
     private static String headerLetters; // Ligne composée de NB_CASES lettres
     private Piece[][] board;
@@ -102,19 +101,6 @@ public class Goban {
         return sb.toString();
     }
 
-
-    private Coordinates getCoordinates(String coordinatesArg) {
-        char[] lineArg = new char[coordinatesArg.length() - 1];
-        coordinatesArg.getChars(1,coordinatesArg.length(),lineArg,0);
-        int row = coordinatesArg.charAt(INDEX_COLUMNS) - INDEX_BEGINNING_ALPHABET;
-        int column;
-        if (Character.isDigit(coordinatesArg.charAt(INDEX_LINES)))
-            column = Integer.parseInt(String.valueOf(lineArg)) - 1;
-        else
-            column = coordinatesArg.charAt(INDEX_LINES) - INDEX_BEGINNING_ALPHABET;
-        return new Coordinates(row, column);
-    }
-
     private IPlayer[] getPlayers(String color) {
         IPlayer[] players = new IPlayer[2];
         players[0] = color.equals("BLACK") ? black : color.equals("WHITE") ? white : null;
@@ -154,38 +140,50 @@ public class Goban {
         }
     }
 
-    public String play(String[] arguments) {
+    private String play(Coordinates coordinates, IPlayer player, IPlayer player2) {
         try {
-            String color = arguments[INDEX_COLOR_PLAY];
-            String coordinatesText = arguments[INDEX_COORDINATES_PLAY];
-            IPlayer[] players = getPlayers(color);
-            IPlayer player = players[0], player2 = players[1];
-
-            Coordinates coordinates = getCoordinates(coordinatesText);
             checkMove(coordinates, player);
-
             addPiece(player, coordinates);
             checkCaptured();
             changeTurn(player, player2);
             if (Objects.equals(player2.getPlayerType(), "AI"))
                 playAI(player2);
+            return "";
         } catch (IllegalArgumentException e) {
             return e.getMessage();
         }
-
-        return "";
     }
 
-    private void playAI(IPlayer ai) {
-        System.out.println(this);
+    public String play(String[] arguments) {
+        String color = arguments[INDEX_COLOR_PLAY];
+        String coordinatesText = arguments[INDEX_COORDINATES_PLAY];
+        IPlayer[] players = getPlayers(color);
+        IPlayer player = players[0], player2 = players[1];
+
+        Coordinates coordinates = Coordinates.getCoordinates(coordinatesText);
+        return play(coordinates, player, player2);
+    }
+
+    public String play(int row, int column) {
+        Coordinates coordinates = new Coordinates(row, column);
+        IPlayer player, player2;
+        if (changeTurn(black, white)) {
+            player = black;
+            player2 = white;
+        } else {
+            player = white;
+            player2 = black;
+        }
+        return play(coordinates, player, player2);
+    }
+
+    private String playAI(IPlayer ai) {
         IPlayer player2 = getOpponentPlayer(ai.getColor());
-        if (Objects.equals(ai.getPlayerType(), "AI") && changeTurn(ai,player2)) {
-            addPiece(ai, ai.play(getEmptyBoxes()));
-            checkCaptured();
+        if (Objects.equals(ai.getPlayerType(), "AI") && ai.getIsTurn()) {
+            Coordinates coordinates = ai.play(getEmptyBoxes());
+            return play(coordinates, ai, player2);
         }
-        if (Objects.equals(player2.getPlayerType(), "AI")) {
-            playAI(player2);
-        }
+        return "";
     }
 
     public void playSGF (String move) {
@@ -326,28 +324,5 @@ public class Goban {
 
     public String toString() {
         return showboard();
-    }
-
-    public String play(int row, int column) {
-        Coordinates coordinates = new Coordinates(row, column);
-        IPlayer player, player2;
-        if (changeTurn(black, white)) {
-            player = black;
-            player2 = white;
-        } else {
-            player = white;
-            player2 = black;
-        }
-        try {
-            checkMove(coordinates, player);
-            addPiece(player, coordinates);
-            checkCaptured();
-            changeTurn(player, player2);
-            if (Objects.equals(player2.getPlayerType(), "AI"))
-                playAI(player2);
-        } catch (IllegalArgumentException e) {
-            return e.getMessage();
-        }
-        return "";
     }
 }
