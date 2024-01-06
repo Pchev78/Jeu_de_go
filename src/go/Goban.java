@@ -327,4 +327,27 @@ public class Goban {
     public String toString() {
         return showboard();
     }
+
+    public String play(int row, int column) {
+        Coordinates coordinates = new Coordinates(row, column);
+        IPlayer player, player2;
+        if (changeTurn(black, white)) {
+            player = black;
+            player2 = white;
+        } else {
+            player = white;
+            player2 = black;
+        }
+        try {
+            checkMove(coordinates, player);
+            addPiece(player, coordinates);
+            checkCaptured();
+            changeTurn(player, player2);
+            if (Objects.equals(player2.getPlayerType(), "AI"))
+                playAI(player2);
+        } catch (IllegalArgumentException e) {
+            return e.getMessage();
+        }
+        return "";
+    }
 }
