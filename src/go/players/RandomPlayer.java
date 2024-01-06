@@ -12,10 +12,10 @@ public class RandomPlayer extends Player {
         super(color, isTurn);
     }
 
-    public Coordinates play(HashMap<Integer, ArrayList<Integer>> emptyBoxes) throws Exception {
-        if (emptyBoxes.isEmpty())
-            throw new Exception("Board is full. End of game.");
-        else {
+    public Coordinates play(HashMap<Integer, ArrayList<Integer>> emptyBoxes) throws IndexOutOfBoundsException {
+        if (emptyBoxes.isEmpty()) {
+            throw new IndexOutOfBoundsException("Board is full. End of game.");
+        } else {
             Random random = new Random();
             int randomIndex = random.nextInt(emptyBoxes.size());
             int randomLine = (int) emptyBoxes.keySet().toArray()[randomIndex];
@@ -24,5 +24,10 @@ public class RandomPlayer extends Player {
             isTurn = false;
             return new Coordinates(randomLine, randomCol);
         }
+    }
+
+    @Override
+    public String getPlayerType() {
+        return "AI";
     }
 }

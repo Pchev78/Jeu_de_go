@@ -7,7 +7,7 @@ import java.util.*;
 
 public class Goban {
     // Nombres par défaut, mais pourront évoluer si on appelle boardsize
-    private static int NB_BOXES = 19, INDEX_SHOW_CAPTURED_WHITE = 10, INDEX_SHOW_CAPTURED_BLACK = 9;
+    private int NB_BOXES = 19, INDEX_SHOW_CAPTURED_WHITE = 10, INDEX_SHOW_CAPTURED_BLACK = 9;
     private static final int MIN_BOXES = 2, MAX_BOXES = 25;
     private static final int INDEX_BEGINNING_ALPHABET = 'A';
     private static final int INDEX_COLOR_PLAY = 0, INDEX_COORDINATES_PLAY = 1;
@@ -18,8 +18,9 @@ public class Goban {
     private Piece[][] board;
     private IPlayer white, black;
     public Goban() {
-        headerLetters = getHeader();
-        clear_board();
+        boardsize(19);
+        white = null;
+        black = null;
     }
 
     public Goban(int size, String string) {
@@ -33,7 +34,7 @@ public class Goban {
         }
     }
 
-    private static String getHeader() {
+    private String getHeader() {
         StringBuilder headerLetters= new StringBuilder();
         headerLetters.append("   ");
         boolean first = true;
@@ -128,6 +129,9 @@ public class Goban {
             black = definePlayer(Color.BLACK, parameters[INDEX_PLAYER_TYPE]);
         else
             throw new IllegalArgumentException("you didn't define correctly your player's color");
+        if (white != null && black != null && Objects.equals(black.getPlayerType(), "AI")) {
+            playAI(black);
+        }
     }
 
     private IPlayer definePlayer(Color color, String playerType) {
@@ -139,13 +143,11 @@ public class Goban {
         throw new IllegalArgumentException("you didn't define correctly your player's color");
     }
 
-    private boolean checkMessage(Coordinates coordinates, IPlayer player, IPlayer player2) {
+    private boolean checkMessage(Coordinates coordinates, IPlayer player) {
         try {
             if (player == null || coordinates.row() + 1 < 0 ||
                     coordinates.row() + 1 > NB_BOXES || coordinates.column() < 0 || coordinates.column() > NB_BOXES)
                 throw new IndexOutOfBoundsException("invalid color or coordinate");
-//            if (!changeTurn(player, player2)) // FIXME Pas nécessaire tant qu'il n'y pas D'IA ?
-//                throw new IndexOutOfBoundsException("Ce n'est pas votre tour, soyez patient.");
             return true;
         } catch (Exception e) {
             return false;
@@ -160,15 +162,30 @@ public class Goban {
             IPlayer player = players[0], player2 = players[1];
 
             Coordinates coordinates = getCoordinates(coordinatesText);
-            checkMove(coordinates, player, player2);
+            checkMove(coordinates, player);
 
             addPiece(player, coordinates);
             checkCaptured();
+            changeTurn(player, player2);
+            if (Objects.equals(player2.getPlayerType(), "AI"))
+                playAI(player2);
         } catch (IllegalArgumentException e) {
             return e.getMessage();
         }
 
         return "";
+    }
+
+    private void playAI(IPlayer ai) {
+        System.out.println(this);
+        IPlayer player2 = getOpponentPlayer(ai.getColor());
+        if (Objects.equals(ai.getPlayerType(), "AI") && changeTurn(ai,player2)) {
+            addPiece(ai, ai.play(getEmptyBoxes()));
+            checkCaptured();
+        }
+        if (Objects.equals(player2.getPlayerType(), "AI")) {
+            playAI(player2);
+        }
     }
 
     public void playSGF (String move) {
@@ -184,12 +201,12 @@ public class Goban {
         }
     }
 
-    private void checkMove(Coordinates coordinates, IPlayer player, IPlayer player2) {
-        if (!checkMessage(coordinates, player, player2)) {
+    private void checkMove(Coordinates coordinates, IPlayer player) {
+        if (!checkMessage(coordinates, player)) {
             throw new IllegalArgumentException("invalid color or coordinate");
         }
 
-        if (!(board[coordinates.row()][coordinates.column()].getColor() == Color.UNDEFINED) || isSuicide(coordinates, new Piece(coordinates,getColorByPlayer(player)))) {
+        if (!(board[coordinates.row()][coordinates.column()].getColor() == Color.UNDEFINED) || isSuicide(coordinates, new Piece(coordinates,player.getColor()))) {
             throw new IllegalArgumentException("illegal move");
         }
     }
@@ -198,24 +215,8 @@ public class Goban {
         return getNbLiberties(coordinates, piece.getColor()) == 0;
     }
 
-    private Color getColorByPlayer(IPlayer player) {
-        if (player.getColor().equals("BLACK"))
-            return Color.BLACK;
-        else if (player.getColor().equals("WHITE"))
-            return Color.WHITE;
-        return Color.UNDEFINED;
-    }
-
-    private Color getEnemyColor(Color color) {
-        if (color == Color.BLACK)
-            return Color.WHITE;
-        else if (color == Color.WHITE)
-            return Color.BLACK;
-        return Color.UNDEFINED;
-    }
-
     private void addPiece (IPlayer player, Coordinates coordinates) {
-        Color color = getColorByPlayer(player);
+        Color color = player.getColor();
         board[coordinates.row()][coordinates.column()] = new Piece(coordinates, color);
     }
 
@@ -284,12 +285,12 @@ public class Goban {
         assert (inBounds(coordinates.row(), coordinates.column()));
         int row = coordinates.row(), column = coordinates.column();
         if (board[row][column].getColor() != Color.UNDEFINED)
-            getOpponentPlayer(board[row][column]).incrementNbCaptured();
+            getOpponentPlayer(board[row][column].getColor()).incrementNbCaptured();
         board[row][column] = new Piece(coordinates,Color.UNDEFINED);
     }
 
-    private IPlayer getOpponentPlayer(Piece stone) {
-        return stone.getColor() == Color.WHITE ? black : white;
+    private IPlayer getOpponentPlayer(Color color) {
+        return color == Color.WHITE ? black : white;
     }
 
     private boolean inBounds(int row, int column) {
@@ -306,12 +307,13 @@ public class Goban {
             }
     }
 
-    public HashMap<Integer, ArrayList<Integer>> getEmptyBoxes(Piece stone) {
+    private HashMap<Integer, ArrayList<Integer>> getEmptyBoxes() {
         HashMap<Integer, ArrayList<Integer>> emptyBoxes = new HashMap<>();
         for (int row = 0; row < NB_BOXES; row++) {
             ArrayList<Integer> columnsList = new ArrayList<>();
             for (int column = 0; column < NB_BOXES; column++) {
-                if (board[row][column].getColor() == Color.UNDEFINED &&
+                Piece stone = board[row][column];
+                if (stone.getColor() == Color.UNDEFINED &&
                         !isSuicide(new Coordinates(row, column), stone)) {
                     columnsList.add(column);
                 }

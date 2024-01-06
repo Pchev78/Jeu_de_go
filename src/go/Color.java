@@ -10,7 +10,6 @@ public enum Color {
             case BLACK -> "X";
             case WHITE -> "O";
             case UNDEFINED -> "."; // Représente une case non occupée par un joueur
-            default -> throw new IllegalArgumentException();
         };
     }
-};
+}

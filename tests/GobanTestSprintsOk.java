@@ -8,10 +8,14 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GobanTestSprintsOk {
     private static Goban goban = new Goban();
 
+    public void defineHumanPlayers() {
+        goban = new Goban();
+        goban.player(new String[]{"BLACK","CONSOLE"});
+        goban.player(new String[]{"WHITE","CONSOLE"});
+    }
     @Test
     void boardsize() {
-        goban.player(new String[]{"WHITE","CONSOLE"});
-        goban.player(new String[]{"BLACK","CONSOLE"});
+        defineHumanPlayers();
         assertEquals("""
                            A B C D E F G H I J K L M N O P Q R S
                         19 . . . . . . . . . . . . . . . . . . . 19
@@ -65,6 +69,7 @@ public class GobanTestSprintsOk {
 
     @Test
     public void clear_board() {
+        defineHumanPlayers();
         goban.boardsize(5);
         assertEquals("""
                    A B C D E
@@ -93,6 +98,7 @@ public class GobanTestSprintsOk {
 
     @Test
     void placePiece() {
+        defineHumanPlayers();
         goban.boardsize(5);
         goban.play(new String[]{"WHITE", "A1"});
         assertEquals("""
@@ -119,6 +125,7 @@ public class GobanTestSprintsOk {
 
     @Test
     public void playCaptureWithoutChains() {
+        defineHumanPlayers();
         goban.boardsize(5);
 
         goban.play(new String[]{"WHITE", "A1"});
@@ -174,6 +181,7 @@ public class GobanTestSprintsOk {
 
     @Test
     public void playCaptureWithChainsBS4() {
+        defineHumanPlayers();
         goban.boardsize(4);
         goban.play(new String[]{"WHITE", "B2"});
         goban.play(new String[]{"WHITE", "C2"});
@@ -204,6 +212,7 @@ public class GobanTestSprintsOk {
 
     @Test
     public void playWithChainsBS5() {
+        defineHumanPlayers();
         goban.boardsize(5);
         goban.play(new String[]{"WHITE", "A1"});
         goban.play(new String[]{"BLACK", "A2"});
@@ -282,6 +291,7 @@ public class GobanTestSprintsOk {
 
     @Test
     public void getNbLibertiesWithoutChains() {
+        defineHumanPlayers();
         goban.boardsize(5);
         goban.play(new String[]{"WHITE", "A1"});
         Coordinates whiteA1 = new Coordinates(0,0);
@@ -311,9 +321,7 @@ public class GobanTestSprintsOk {
     @Test
     public void getNbLibertiesChainBS5() {
         playWithChainsBS5();
-//        System.out.println(goban);
         assertEquals(1, goban.getNbLiberties(0,1));
-        System.out.println(goban.showboard());
         assertEquals(2, goban.getNbLiberties(0,2));
         assertEquals(1, goban.getNbLiberties(1,0));
         assertEquals(5, goban.getNbLiberties(1,1));
@@ -329,5 +337,39 @@ public class GobanTestSprintsOk {
         goban = new Goban();
         goban.player(new String[]{"BLACK", "CONSOLE"});
         goban.player(new String[]{"WHITE", "CONSOLE"});
+    }
+
+    @Test
+    public void playerWhiteAI() {
+        goban = new Goban();
+        goban.boardsize(4);
+        goban.player(new String[]{"BLACK", "CONSOLE"});
+        goban.player(new String[]{"WHITE", "RANDOM"});
+        // Les blancs jouent après les noirs, l'IA doit donc jouer après l'humain
+        assertEquals("""
+                           A B C D
+                         4 . . . . 4
+                         3 . . . . 3
+                         2 . . . . 2     WHITE (O) has captured 0 stones
+                         1 . . . . 1     BLACK (X) has captured 0 stones
+                           A B C D
+                        """, goban.showboard());
+    }
+
+    @Test
+    public void playerBlackAI() {
+        goban.boardsize(4);
+        goban.player(new String[]{"WHITE", "CONSOLE"});
+        goban.player(new String[]{"BLACK", "RANDOM"});
+
+        // Les noirs jouent avant les blancs, l'IA doit donc jouer avant l'humain
+        assertNotEquals("""
+                           A B C D
+                         4 . . . . 4
+                         3 . . . . 3
+                         2 . . . . 2     WHITE (O) has captured 0 stones
+                         1 . . . . 1     BLACK (X) has captured 0 stones
+                           A B C D
+                        """, goban.showboard());
     }
 }

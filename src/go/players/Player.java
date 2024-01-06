@@ -1,7 +1,11 @@
 package go.players;
 
 import go.Color;
+import go.Coordinates;
 import go.IPlayer;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public abstract class Player implements IPlayer {
     protected boolean isTurn;
@@ -15,8 +19,8 @@ public abstract class Player implements IPlayer {
         nbCaptured = 0;
     }
 
-    public String getColor() {
-        return color == Color.BLACK ? "BLACK" : "WHITE";
+    public Color getColor() {
+        return color;
     }
 
     public void resetNbCaptured() {
@@ -40,4 +44,7 @@ public abstract class Player implements IPlayer {
             return "BLACK (X) has captured " + nbCaptured + " stones";
         return "WHITE (O) has captured " + nbCaptured + " stones";
     }
+
+    public abstract String getPlayerType();
+    public abstract Coordinates play(HashMap<Integer, ArrayList<Integer>> emptyBoxes) throws IndexOutOfBoundsException;
 }
