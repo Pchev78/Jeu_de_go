@@ -16,12 +16,22 @@ public class Goban {
     private static String headerLetters; // En-tête composé de lettres correspondant à la taille du Goban.
     private Piece[][] board;
     private IPlayer white, black;
+
+    /**
+     * Constructeur par défaut de la classe Goban
+     */
     public Goban() {
         boardsize(19);
         white = null;
         black = null;
     }
 
+    /**
+     * Constructeur pour tester plus rapidement
+     * @param size : la taille du tableau
+     * @param string : les coups joués alternativement par les joueurs, au format SGF
+     * @see playSGF(String)
+     */
     public Goban(int size, String string) {
         white = new ConsolePlayer(Color.WHITE,false);
         black = new ConsolePlayer(Color.BLACK,false);
@@ -33,6 +43,9 @@ public class Goban {
         }
     }
 
+    /**
+     * @return la chaîne de lettres qui sera affichée pour représenter les colonnes
+     */
     private String getHeader() {
         StringBuilder headerLetters= new StringBuilder();
         headerLetters.append("   "); // Espaces initiaux pour l'alignement.

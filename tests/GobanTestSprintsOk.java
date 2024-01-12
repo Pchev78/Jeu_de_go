@@ -302,21 +302,6 @@ public class GobanTestSprintsOk {
         assertEquals(1,goban.getNbLiberties(whiteA1, Color.WHITE));
     }
 
-
-    @Test
-    public void getNbLiberties() {
-        Goban g = new Goban(6, "bb ab ac aa");
-        System.out.println(g);
-
-//        assertEquals(2, g.getNbLiberties(0, 2));
-//        assertEquals(1, g.getNbLiberties(0, 1));
-//        assertEquals(1, g.getNbLiberties(0, 0)); // @FIXME Ne fonctionne pas
-//        assertEquals(3, g.getNbLiberties(1, 1));
-
-        g.play(1,0);
-        System.out.println(g);
-    }
-
     @Test
     public void getNbLibertiesChainBS5() {
         playWithChainsBS5();
@@ -329,6 +314,20 @@ public class GobanTestSprintsOk {
         assertEquals(5, goban.getNbLiberties(2,1));
         assertEquals(5, goban.getNbLiberties(2,2));
         assertEquals(5, goban.getNbLiberties(3,2));
+    }
+
+    @Test
+    public void getNbLiberties() {
+        Goban g = new Goban(6, "bb ab ac aa");
+        System.out.println(g);
+
+        assertEquals(2, g.getNbLiberties(0, 2));
+        assertEquals(1, g.getNbLiberties(0, 1));
+        assertEquals(1, g.getNbLiberties(0, 0)); // @FIXME Ne fonctionne pas
+        assertEquals(3, g.getNbLiberties(1, 1));
+
+        g.play(1,0);
+        System.out.println(g);
     }
 
     @Test

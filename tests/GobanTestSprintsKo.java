@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public class GobanTestSprintsKo {
     private static Goban goban = new Goban();
 
-    public void definePlayers() {
+    public void defineHumanPlayers() {
         goban.player(new String[] {"WHITE","CONSOLE"});
         goban.player(new String[] {"BLACK","CONSOLE"});
     }
@@ -19,7 +19,7 @@ public class GobanTestSprintsKo {
 
     @Test
     public void placePiece() {
-        definePlayers();
+        defineHumanPlayers();
         assertEquals("invalid color or coordinate", goban.play(new String[] {"BLACK","Z2"}));
         assertEquals("invalid color or coordinate", goban.play(new String[] {"BLACK","A26"}));
         assertEquals("invalid color or coordinate", goban.play(new String[] {"GREY","A6"}));
@@ -39,7 +39,7 @@ public class GobanTestSprintsKo {
     }
 
     @Test
-    public void definePlayersTest() {
+    public void definePlayers() {
         goban = new Goban();
         assertThrows(IllegalArgumentException.class, () -> goban.player(new String[] {"GREY","CONSOLE"}));
         assertThrows(IllegalArgumentException.class, () -> goban.player(new String[] {"BLACK","PLAYER"}));
