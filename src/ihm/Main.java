@@ -5,7 +5,7 @@ import java.util.Scanner;
 
 public class Main {
     private static boolean showNbCommands = false;
-    private static int nb_commands;
+    private static int nbCommands;
     private static Goban goban = new Goban();
     /**
      * Méthode qui permet de récupérer la commande à partir des arguments.
@@ -17,7 +17,7 @@ public class Main {
         boolean first = true;
         int i = 0;
         try { // S'il y a un nombre avant la commande
-            nb_commands = Integer.parseInt(arguments[0]);
+            nbCommands = Integer.parseInt(arguments[0]);
             showNbCommands = true;
             i = 1;
         } catch (NumberFormatException e) {
@@ -63,7 +63,7 @@ public class Main {
         else
             sb.append('=');
         if (showNbCommands)
-            sb.append(nb_commands);
+            sb.append(nbCommands);
         return sb.toString();
     }
 

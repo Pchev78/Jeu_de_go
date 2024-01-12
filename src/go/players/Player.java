@@ -64,8 +64,8 @@ public abstract class Player implements IPlayer {
      */
     public String stringifyNbCaptured() {
         if (color == Color.BLACK)
-            return "BLACK (X) a capturé " + nbCaptured + " pierres";
-        return "WHITE (O) a capturé " + nbCaptured + " pierres";
+            return "BLACK (X) has captured " + nbCaptured + " stones";
+        return "WHITE (O) has captured " + nbCaptured + " stones";
     }
 
     /**

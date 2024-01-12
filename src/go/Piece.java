@@ -2,7 +2,7 @@ package go;
 
 public class Piece {
     private Color color;
-    private Coordinates coordinates;
+    private Coordinates coordinates; // TODO Les coordonnées auraient pu être utilisées par la suite pour la vérification des libertés
     public Piece(Coordinates coordinates, Color color) {
         this.coordinates = coordinates;
         this.color = color;
@@ -10,13 +10,5 @@ public class Piece {
 
     public Color getColor() {
         return color;
-    }
-
-    public Color getennemycolor(Color color){
-        if (color == Color.WHITE)
-            return Color.BLACK;
-        else if (color == Color.BLACK)
-            return Color.WHITE;
-        return Color.UNDEFINED;
     }
 }

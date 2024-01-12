@@ -7,6 +7,7 @@ public class GobanTestSprintsKo {
     private static Goban goban = new Goban();
 
     public void defineHumanPlayers() {
+        goban = new Goban();
         goban.player(new String[] {"WHITE","CONSOLE"});
         goban.player(new String[] {"BLACK","CONSOLE"});
     }
