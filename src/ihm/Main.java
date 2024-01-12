@@ -7,6 +7,11 @@ public class Main {
     private static boolean showNbCommands = false;
     private static int nb_commands;
     private static Goban goban = new Goban();
+    /**
+     * Méthode qui permet de récupérer la commande à partir des arguments.
+     * @param arguments Les arguments.
+     * @return La commande.
+     */
     public static String getCommand(String[] arguments) {
         StringBuilder sb = new StringBuilder();
         boolean first = true;
@@ -28,6 +33,11 @@ public class Main {
         return sb.toString();
     }
 
+    /**
+     * Méthode qui appelle la fonction boardsize() si le prochain paramètre est un entier.
+     * @param arguments Les arguments.
+     * @param command La commande.
+     */
     public static void callBoardsize(String[] arguments, String command) {
         if (arguments.length > 1) { // S'il y a quelque chose après "boardsize"
             try { // Si le prochain paramètre est un entier, on appelle la fonction boardsize()
@@ -41,7 +51,11 @@ public class Main {
         } else
             System.out.println(displayOutput("boardsize not an integer") + '\n');
     }
-
+    /**
+     * Méthode qui affiche le résultat de la commande.
+     * @param error L'erreur.
+     * @return Le résultat de la commande.
+     */
     public static String displayOutput(String error) {
         StringBuilder sb = new StringBuilder();
         if (!error.isEmpty())

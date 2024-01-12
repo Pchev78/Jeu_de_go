@@ -8,10 +8,21 @@ import java.util.HashMap;
 import java.util.Random;
 
 public class RandomPlayer extends Player {
+    /**
+     * Constructeur de la classe RandomPlayer.
+     * @param color Couleur du joueur.
+     * @param isTurn Booléen qui indique si c'est le tour du joueur.
+     */
     public RandomPlayer(Color color, boolean isTurn) {
         super(color, isTurn);
     }
 
+    /**
+     * Permet au joueur de jouer un coup aléatoire.
+     * @param emptyBoxes Liste des cases vides.
+     * @return Les coordonnées du coup joué.
+     * @throws IndexOutOfBoundsException Si la liste des cases vides est vide.
+     */
     public Coordinates play(HashMap<Integer, ArrayList<Integer>> emptyBoxes) throws IndexOutOfBoundsException {
         if (emptyBoxes.isEmpty()) {
             throw new IndexOutOfBoundsException("Board is full. End of game.");
@@ -25,6 +36,9 @@ public class RandomPlayer extends Player {
         }
     }
 
+    /**
+     * @return Le type de joueur.
+     */
     @Override
     public String getPlayerType() {
         return "AI";

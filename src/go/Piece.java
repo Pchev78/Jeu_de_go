@@ -11,4 +11,12 @@ public class Piece {
     public Color getColor() {
         return color;
     }
+
+    public Color getennemycolor(Color color){
+        if (color == Color.WHITE)
+            return Color.BLACK;
+        else if (color == Color.BLACK)
+            return Color.WHITE;
+        return Color.UNDEFINED;
+    }
 }
