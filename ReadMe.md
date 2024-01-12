@@ -66,7 +66,7 @@ Après le sprint 1, nous nous sommes tout de suite aperçus qu'il était extrêm
 Nous avons choisi de réaliser une multitude de tests, que vous pourrez retrouver dans le dossier /tests. Cela nous a permis de vérifier au fur et à mesure nos erreurs, les comparer aux résultats attendus, utiliser le débogueur, etc. 
 
 ## Diagramme d'architecture
-! [Diagramme d'architecture du projet] (Diagramme_architecture.png)
+! [Diagramme d'architecture du projet](Diagramme_architecture.png)
 
 # Commentaires lors des recettes
 ## Sprint 1
