@@ -1,4 +1,13 @@
 ## Periode B : Projet Go
+
+Note 12/20
+
+Architecture OK
+Les prises de pierres ne marchent pas bien
+L'interface IPlayer n'est pas comprise : une seule méthode comme getCoup aurait suffit !
+L'utilisation de getPlayerType() ruine le polymoprhisme
+
+
 ### Groupe 202:
 * KACI Said
 * CHEVILY Pierre
